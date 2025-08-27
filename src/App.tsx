@@ -71,6 +71,7 @@ import DocsHub from "./pages/DocsHub";
 // Static Pages
 import About from "./pages/About";
 import FAQ from "./pages/FAQ";
+import Help from "./pages/Help";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 
@@ -168,7 +169,7 @@ const App = () => (
             {/* Static Pages */}
             <Route path="/about" element={<AppShell><About /></AppShell>} />
             <Route path="/faq" element={<AppShell><FAQ /></AppShell>} />
-            <Route path="/help" element={<AppShell><FAQ /></AppShell>} />
+            <Route path="/help" element={<AppShell><Help /></AppShell>} />
             <Route path="/terms" element={<AppShell><Terms /></AppShell>} />
             <Route path="/privacy" element={<AppShell><Privacy /></AppShell>} />
             <Route path="/docs" element={<AppShell><DocsHub /></AppShell>} />
