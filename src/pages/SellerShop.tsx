@@ -1,6 +1,7 @@
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ProductCarousel } from "@/components/sections/product-carousel";
 import { products } from "@/data/mock-data";
@@ -18,8 +19,8 @@ const SellerShop = () => {
             <div className="flex items-center gap-3">
               <img src="https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?w=120" className="w-16 h-16 rounded-full border" />
               <div>
-                <h1 className="text-2xl font-bold">TechWorld</h1>
-                <p className="text-sm text-white/80">Leading electronics store on Rassooq</p>
+                <h1 className="text-2xl md:text-3xl font-bold text-secondary">TechWorld</h1>
+                <p className="text-sm text-white/80 font-light">Leading electronics store on Rassooq</p>
               </div>
             </div>
           </div>
@@ -28,7 +29,7 @@ const SellerShop = () => {
         <section className="container mx-auto px-4 py-6">
           <Card>
             <CardContent className="pt-4">
-              <p className="text-sm text-muted-foreground">We bring you the best of consumer tech at unbeatable prices. From smartphones and audio gear to laptops and accessories, our curated catalog is updated weekly.</p>
+              <p className="text-sm text-muted-foreground font-light">We bring you the best of consumer tech at unbeatable prices. From smartphones and audio gear to laptops and accessories, our curated catalog is updated weekly.</p>
             </CardContent>
           </Card>
         </section>
@@ -40,14 +41,14 @@ const SellerShop = () => {
         <section className="container mx-auto px-4 py-6 grid md:grid-cols-2 gap-4">
           <Card>
             <CardContent className="pt-4">
-              <div className="font-semibold mb-2">Promo Video</div>
+              <div className="font-semibold mb-2 text-secondary">Promo Video</div>
               <div className="aspect-video bg-black/10 rounded" />
             </CardContent>
           </Card>
           <Card>
             <CardContent className="pt-4">
-              <div className="font-semibold mb-2">Lookbook</div>
-              <Button variant="outline">Download PDF</Button>
+              <div className="font-semibold mb-2 text-secondary">Lookbook</div>
+              <Button className="bg-gradient-to-r from-primary to-secondary text-primary-foreground hover:shadow-glow">Download PDF</Button>
             </CardContent>
           </Card>
         </section>
@@ -55,7 +56,7 @@ const SellerShop = () => {
         <section className="container mx-auto px-4 py-6 grid md:grid-cols-3 gap-4">
           <Card>
             <CardContent className="pt-4">
-              <div className="font-semibold mb-2">Follow Us</div>
+              <div className="font-semibold mb-2 text-secondary">Follow Us</div>
               <div className="flex gap-2 text-sm text-muted-foreground">
                 <a href="#" className="underline">Instagram</a>
                 <a href="#" className="underline">Website</a>
@@ -64,12 +65,16 @@ const SellerShop = () => {
           </Card>
           <Card className="md:col-span-2">
             <CardContent className="pt-4">
-              <div className="font-semibold mb-2">Wholesale & Terms</div>
+              <div className="font-semibold mb-2 text-secondary">Wholesale & Terms</div>
               <ul className="list-disc pl-5 text-sm text-muted-foreground">
                 <li>Minimum order: 100 units</li>
                 <li>Payment: Bank transfer or card</li>
                 <li>Delivery: 3–7 days</li>
               </ul>
+              <div className="mt-3 flex gap-2">
+                <Badge className="bg-flash text-flash-foreground">Certified</Badge>
+                <Badge className="bg-tertiary text-tertiary-foreground">Eco</Badge>
+              </div>
             </CardContent>
           </Card>
         </section>

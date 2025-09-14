@@ -18,6 +18,8 @@ import {
   Filter
 } from "lucide-react";
 import { useAppContext } from "@/contexts/AppContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { SellerProductManager } from "@/components/seller/SellerProductManager";
 import { Link } from "react-router-dom";
 
 const SellerDashboard = () => {
@@ -172,8 +174,9 @@ const SellerDashboard = () => {
 
           {/* Main Dashboard Content */}
           <Tabs defaultValue="overview" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:grid-cols-4">
+            <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:grid-cols-5">
               <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="products">Products</TabsTrigger>
               <TabsTrigger value="orders">Orders</TabsTrigger>
               <TabsTrigger value="inventory">Inventory</TabsTrigger>
               <TabsTrigger value="analytics">Analytics</TabsTrigger>
@@ -233,6 +236,10 @@ const SellerDashboard = () => {
                   </CardContent>
                 </Card>
               </div>
+            </TabsContent>
+
+            <TabsContent value="products">
+              <SellerProductManager />
             </TabsContent>
 
             <TabsContent value="orders">

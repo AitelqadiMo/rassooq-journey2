@@ -1,46 +1,31 @@
-import { Search, ShoppingCart, User, Menu, Globe, Bell } from "lucide-react";
+import { Search, User, Globe, Bell, Mic } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SouqLogo } from "@/components/ui/souq-logo";
-import { Badge } from "@/components/ui/badge";
-import { useNavigate } from "react-router-dom";
-import { useCart, useAppContext } from "@/contexts/AppContext";
-import { products, categories } from "@/data/mock-data";
-import { MiniCart } from "@/components/ui/mini-cart";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAppContext } from "@/contexts/AppContext";
+import { useAuth } from "@/contexts/AuthContext";
+// import { products, categories } from "@/data/mock-data";
 import { MobileMenu } from "@/components/layout/mobile-menu";
 import { ShellContext } from "@/components/layout/app-shell";
 import { RoleSwitcher } from "@/components/ui/role-switcher";
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 export const Header = () => {
   const inShell = React.useContext(ShellContext);
   const navigate = useNavigate();
-  const { itemCount } = useCart();
+  const location = useLocation();
   const { state, dispatch } = useAppContext();
-  const [miniOpen, setMiniOpen] = React.useState(false);
+  const { user, isAuthenticated, role, signOutUser } = useAuth();
+  // Mini cart moved to AppShell for a single global cart entry point
   const [query, setQuery] = React.useState("");
   const [searchFocused, setSearchFocused] = React.useState(false);
   
+  // Suggestions temporarily disabled - will implement with real data
   const suggestions = React.useMemo(() => {
-    if (!query) return [] as Array<{ label: string; href: string; type: 'product' | 'category' }>;
-    const productMatches = products
-      .filter(p => p.title.toLowerCase().includes(query.toLowerCase()))
-      .slice(0, 4)
-      .map(p => ({ 
-        label: p.title, 
-        href: `/p/${encodeURIComponent(p.title.toLowerCase().replace(/\s+/g, '-'))}`,
-        type: 'product' as const
-      }));
-    const categoryMatches = categories
-      .filter(c => c.title.toLowerCase().includes(query.toLowerCase()))
-      .slice(0, 3)
-      .map(c => ({ 
-        label: c.title, 
-        href: `/c/${c.id}`,
-        type: 'category' as const
-      }));
-    return [...productMatches, ...categoryMatches].slice(0, 6);
+    return [] as Array<{ label: string; href: string; type: 'product' | 'category' }>;
   }, [query]);
 
   const onSearchSubmit = (e: React.FormEvent) => {
@@ -53,6 +38,8 @@ export const Header = () => {
 
   if (inShell) return null;
 
+  const isAuthRoute = location.pathname.startsWith('/login') || location.pathname.startsWith('/register');
+
   return (
     <motion.header 
       initial={{ y: -100, opacity: 0 }}
@@ -63,8 +50,8 @@ export const Header = () => {
       {/* Ultra-thin glass backdrop */}
       <div className="absolute inset-0 bg-background/80 backdrop-blur-xl border-b border-border/10" />
       
-      <div className="relative container mx-auto px-6">
-        <div className="flex items-center justify-between py-6">
+      <div className="relative container mx-auto px-3 sm:px-4 md:px-6">
+        <div className="flex items-center justify-between py-3 sm:py-4 md:py-6 gap-4 sm:gap-6">
           {/* Mobile menu button */}
           <div className="md:hidden">
             <MobileMenu />
@@ -89,7 +76,7 @@ export const Header = () => {
           </motion.div>
           
           {/* Enhanced Search Bar - Desktop */}
-          <div className="hidden md:flex flex-1 max-w-2xl mx-12">
+          <div className="hidden md:flex flex-1 max-w-3xl xl:max-w-4xl mx-4 lg:mx-12">
             <div className="relative w-full">
               <motion.form 
                 onSubmit={onSearchSubmit} 
@@ -101,7 +88,7 @@ export const Header = () => {
               >
                 <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5 z-10" />
                 <Input 
-                  placeholder="Search for anything..."
+                  placeholder="Search for products, categories, or brands…"
                   className="pl-14 pr-6 py-4 glass-premium border-0 shadow-floating focus:shadow-glow focus:ring-2 focus:ring-primary/20 transition-all duration-300 text-base font-medium rounded-2xl"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
@@ -109,6 +96,10 @@ export const Header = () => {
                   onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
                 />
               </motion.form>
+              {/* Voice search (visual affordance only for now) */}
+              <button aria-label="Voice search" className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors">
+                <Mic className="h-4 w-4" />
+              </button>
               
               {/* Enhanced Search Suggestions */}
               <AnimatePresence>
@@ -145,19 +136,19 @@ export const Header = () => {
           </div>
           
           {/* Right Actions - Enhanced */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-5">
             {/* Desktop role switcher */}
             <div className="hidden lg:block">
               <RoleSwitcher />
             </div>
             
             {/* Action Buttons */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 sm:gap-3">
               {/* Search - Mobile */}
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="md:hidden glass-card h-12 w-12 hover:shadow-medium hover:scale-105 transition-all duration-200 rounded-2xl" 
+                  className="md:hidden glass-card h-10 w-10 sm:h-12 sm:w-12 hover:shadow-medium hover:scale-105 transition-all duration-200 rounded-2xl"
               >
                 <Search className="h-5 w-5" />
               </Button>
@@ -167,7 +158,7 @@ export const Header = () => {
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="glass-card h-12 w-12 hover:shadow-medium hover:bg-primary/10 transition-all duration-200 rounded-2xl" 
+                  className="glass-card h-10 w-10 sm:h-12 sm:w-12 hover:shadow-medium hover:bg-primary/10 transition-all duration-200 rounded-2xl" 
                   onClick={() => dispatch({ 
                     type: 'SET_LANGUAGE', 
                     payload: state.language === 'en' ? 'ar' : state.language === 'ar' ? 'fr' : 'en' 
@@ -189,42 +180,47 @@ export const Header = () => {
                 </Button>
               </motion.div>
 
-              {/* Cart */}
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="relative glass-card h-12 w-12 hover:shadow-medium hover:bg-primary/10 transition-all duration-200 rounded-2xl" 
-                  onClick={() => setMiniOpen(true)} 
-                  data-testid="open-cart"
-                >
-                  <ShoppingCart className="h-5 w-5" />
-                  <AnimatePresence>
-                    {itemCount > 0 && (
-                      <motion.div
-                        initial={{ scale: 0, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0, opacity: 0 }}
-                        className="absolute -top-2 -right-2 h-6 w-6 bg-gradient-primary rounded-full flex items-center justify-center text-primary-foreground text-xs font-bold shadow-glow"
-                      >
-                        {itemCount}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </Button>
-              </motion.div>
-              
               {/* Account */}
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="glass-card h-12 w-12 hover:shadow-medium hover:bg-primary/10 transition-all duration-200 rounded-2xl" 
-                  onClick={() => navigate(state.user ? '/account' : '/account/login')} 
-                  data-testid="account-btn"
-                >
-                  <User className="h-5 w-5" />
-                </Button>
+                {isAuthenticated ? (
+                  <div className="flex items-center gap-2">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="glass-card h-10 px-3 sm:h-12 sm:px-4 hover:shadow-medium hover:bg-primary/10 transition-all duration-200 rounded-2xl flex items-center gap-2" 
+                      onClick={signOutUser}
+                      title="Sign Out"
+                    >
+                      <User className="h-5 w-5" />
+                      <span className="hidden sm:inline text-sm">Account</span>
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm">For Business</Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Business</DropdownMenuLabel>
+                        <DropdownMenuItem onClick={() => navigate('/login/seller')}>Seller Login</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => navigate('/login/admin')}>Admin Login</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                    {!isAuthRoute && (
+                      <Button 
+                        variant="default" 
+                        size="sm" 
+                        className="h-10 sm:h-12 rounded-2xl px-4 bg-gradient-to-r from-orange-500/80 to-yellow-500/80 text-white hover:from-orange-500 hover:to-yellow-500 shadow-medium transition-all" 
+                        onClick={() => navigate('/login')} 
+                        data-testid="account-btn"
+                      >
+                        <User className="h-5 w-5 mr-2" />
+                        <span className="text-sm font-medium">Login / Register</span>
+                      </Button>
+                    )}
+                  </div>
+                )}
               </motion.div>
             </div>
           </div>
@@ -236,22 +232,23 @@ export const Header = () => {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="md:hidden pb-6"
+            className="md:hidden pb-3 sm:pb-4"
           >
             <form onSubmit={onSearchSubmit} className="relative">
               <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input 
-                placeholder="Search products..."
+                placeholder="Search for products, categories, or brands…"
                 className="pl-14 pr-4 py-4 glass-premium border-0 shadow-floating focus:shadow-glow transition-all duration-300 rounded-2xl"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
               />
+              <button aria-label="Voice search" className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors">
+                <Mic className="h-4 w-4" />
+              </button>
             </form>
           </motion.div>
         </AnimatePresence>
       </div>
-      
-      <MiniCart open={miniOpen} onOpenChange={setMiniOpen} />
     </motion.header>
   );
 };

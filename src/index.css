@@ -10,6 +10,12 @@ All colors MUST be HSL. 60/30/10 color usage with WCAG AA accessibility.
 */
 
 @layer base {
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow-x: hidden;
+  }
   :root {
     /* Rassooq Brand Colors (Hoojan-inspired) */
     /* Action / CTA */

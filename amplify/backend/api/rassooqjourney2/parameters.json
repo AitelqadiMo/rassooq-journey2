@@ -1,0 +1,11 @@
+{
+  "AppSyncApiName": "rassooqjourney2",
+  "DynamoDBBillingMode": "PAY_PER_REQUEST",
+  "DynamoDBEnableServerSideEncryption": false,
+  "AuthCognitoUserPoolId": {
+    "Fn::GetAtt": [
+      "authrassooqjourney258f5624e",
+      "Outputs.UserPoolId"
+    ]
+  }
+}

@@ -12,7 +12,7 @@ export const RassooqLogo = ({
   className, 
   variant = "full",
   size = "md",
-  imageSrc = "/rassooq-logo.png"
+  imageSrc = "/logo-with-cart.svg"
 }: RassooqLogoProps) => {
   const sizeClasses = {
     sm: "w-6 h-6 text-xs",
@@ -71,7 +71,7 @@ export const RassooqLogo = ({
         "font-reem-kufi font-bold text-foreground tracking-wide",
         textSizes[size]
       )}>
-        RASSOOQ
+        Rassooq
       </span>
     </div>
   );

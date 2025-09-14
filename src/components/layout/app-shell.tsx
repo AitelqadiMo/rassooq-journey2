@@ -1,6 +1,7 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { useAuth, useCart, useAppContext } from "@/contexts/AppContext";
+import { useCart, useAppContext } from "@/contexts/AppContext";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   SidebarProvider,
   Sidebar,
@@ -25,6 +26,8 @@ import {
 } from "lucide-react";
 import { TopBar } from "@/components/layout/top-bar";
 import { Footer } from "@/components/layout/footer";
+import { MiniCart } from "@/components/ui/mini-cart";
+import { FloatingCart } from "@/components/ui/floating-cart";
 
 export const ShellContext = React.createContext<boolean>(false);
 
@@ -83,11 +86,15 @@ function generateBreadcrumbs(pathname: string) {
 }
 
 export function AppShell({ children }: { children: React.ReactNode }) {
-  const { currentRole } = useAuth();
+  const { role } = useAuth();
   const { dispatch } = useAppContext();
   const navigate = useNavigate();
   const location = useLocation();
   const { itemCount } = useCart();
+  const [miniOpen, setMiniOpen] = useState(false);
+  const [overrideRole, setOverrideRole] = useState<"buyer" | "seller" | "admin" | null>(null);
+  const pathRole = location.pathname.startsWith('/admin') ? 'admin' : location.pathname.startsWith('/seller') ? 'seller' : null;
+  const currentRole = (pathRole ?? overrideRole ?? role ?? 'buyer') as "buyer" | "seller" | "admin";
   const menu = useRoleMenu(currentRole);
 
   const cta = useMemo(() => {
@@ -102,12 +109,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <ShellContext.Provider value={true}>
     <SidebarProvider>
-      {/* URL role override for testing: ?role=admin|seller|buyer */}
+      {/* URL role override for testing: ?role=admin|seller|buyer (local only) */}
       {(() => {
         const params = new URLSearchParams(location.search);
-        const role = params.get('role') as any;
-        if (role && ['buyer','seller','admin'].includes(role)) {
-          dispatch({ type: 'SET_ROLE', payload: role });
+        const qpRole = params.get('role') as any;
+        if (qpRole && ['buyer','seller','admin'].includes(qpRole)) {
+          setOverrideRole(qpRole);
           params.delete('role');
           window.history.replaceState(null, '', location.pathname + (params.toString()? `?${params.toString()}`:''));
         }
@@ -147,6 +154,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       )}
       <SidebarInset>
         <TopBar />
+        {/* Listen for global mini-cart open events from header/top-bar/buttons */}
+        {(() => {
+          // inline effect block to attach listener once
+          // eslint-disable-next-line react-hooks/rules-of-hooks
+          useEffect(() => {
+            const handler = () => setMiniOpen(true);
+            window.addEventListener('rassooq:open-mini-cart', handler as EventListener);
+            return () => window.removeEventListener('rassooq:open-mini-cart', handler as EventListener);
+          }, []);
+          return null;
+        })()}
         <div className="sticky top-0 z-40 bg-background/60 backdrop-blur border-b">
           <div className="container mx-auto px-4 py-2 flex items-center gap-2">
             {currentRole !== 'buyer' && <SidebarTrigger />}
@@ -188,9 +206,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <Footer forceVisible />
         {currentRole === 'buyer' && (
           <>
-            <button onClick={() => navigate('/cart')} className="fixed bottom-20 right-4 md:right-6 z-40 rounded-full bg-primary text-primary-foreground shadow-card px-4 py-2 flex items-center gap-2">
-              <Package className="h-4 w-4" /> Cart ({itemCount})
-            </button>
+            {/* Desktop Floating Cart */}
+            <div className="hidden md:block">
+              <FloatingCart itemCount={itemCount} onCartClick={() => setMiniOpen(true)} />
+            </div>
+            {/* Mobile Bottom Bar */}
             <div className="fixed bottom-0 left-0 right-0 z-40 bg-card/80 backdrop-blur border-t md:hidden">
               <div className="grid grid-cols-4">
                 <NavLink to="/" className="flex flex-col items-center py-2 text-xs">
@@ -199,7 +219,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 <NavLink to="/c/electronics" className="flex flex-col items-center py-2 text-xs">
                   <ShoppingBag className="h-5 w-5" /> Categories
                 </NavLink>
-                <button onClick={() => navigate('/cart')} className="flex flex-col items-center py-2 text-xs">
+                <button onClick={() => setMiniOpen(true)} className="flex flex-col items-center py-2 text-xs">
                   <Package className="h-5 w-5" /> Cart
                 </button>
                 <NavLink to="/account" className="flex flex-col items-center py-2 text-xs">
@@ -207,6 +227,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 </NavLink>
               </div>
             </div>
+            {/* Mini Cart Drawer */}
+            <MiniCart open={miniOpen} onOpenChange={setMiniOpen} />
           </>
         )}
       </SidebarInset>

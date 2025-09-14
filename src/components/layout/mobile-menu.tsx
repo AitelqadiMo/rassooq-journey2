@@ -4,6 +4,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { RassooqLogo } from "@/components/ui/souq-logo";
 import { RoleSwitcher } from "@/components/ui/role-switcher";
 import { useAppContext } from "@/contexts/AppContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { 
   Menu, 
   Home, 
@@ -28,6 +29,7 @@ import { cn } from "@/lib/utils";
 export function MobileMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const { state } = useAppContext();
+  const { user, isAuthenticated, role, signOutUser } = useAuth();
 
   const buyerMenuItems = [
     { icon: Home, label: "Home", href: "/" },
@@ -93,23 +95,27 @@ export function MobileMenu() {
           </div>
 
           {/* User Info */}
-          {state.user && (
+          {isAuthenticated && user && (
             <div className="py-4 border-b">
               <div className="flex items-center gap-3">
-                {state.user.avatar ? (
-                  <img 
-                    src={state.user.avatar} 
-                    alt={state.user.name}
-                    className="w-10 h-10 rounded-full"
-                  />
-                ) : (
-                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                    <User className="h-5 w-5 text-primary" />
+                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                  <User className="h-5 w-5 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-medium">
+                    {user.signInDetails?.loginId?.split('@')[0] || 'User'}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {user.signInDetails?.loginId || 'user@example.com'}
+                  </p>
+                  <div className="flex items-center gap-1 mt-1">
+                    <span className="text-xs px-2 py-1 rounded bg-primary/10 text-primary">
+                      {role === 'admin' && '🛡️ Admin'}
+                      {role === 'seller' && '🏪 Seller'}
+                      {role === 'buyer' && '🛒 Buyer'}
+                      {!role && '👤 User'}
+                    </span>
                   </div>
-                )}
-                <div>
-                  <p className="font-medium">{state.user.name}</p>
-                  <p className="text-sm text-muted-foreground">{state.user.email}</p>
                 </div>
               </div>
             </div>
@@ -137,7 +143,19 @@ export function MobileMenu() {
           </nav>
 
           {/* Footer */}
-          <div className="border-t pt-4">
+          <div className="border-t pt-4 space-y-4">
+            {isAuthenticated && (
+              <Button 
+                variant="outline" 
+                className="w-full" 
+                onClick={() => {
+                  signOutUser();
+                  setIsOpen(false);
+                }}
+              >
+                Sign Out
+              </Button>
+            )}
             <div className="text-xs text-muted-foreground text-center">
               <p>Rassooq Marketplace</p>
               <p>Version 1.0.0</p>

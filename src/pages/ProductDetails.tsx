@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { QuantitySelector } from "@/components/ui/quantity-selector";
 import { ProductCarousel } from "@/components/sections/product-carousel";
 import { products } from "@/data/mock-data";
+import { useAmplifyProduct } from "@/hooks/use-amplify-product";
 import { 
   Heart, 
   Share2, 
@@ -30,16 +31,18 @@ const ProductDetails = () => {
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
 
-  // Find product by ID (in real app, this would be an API call)
-  const product = products.find(p => p.id === id) || products[0];
+  // Prefer live product by id or slug; fallback to mocks
+  const { item: live } = useAmplifyProduct({ id, slug: id });
+  const fallback = products.find(p => p.id === id) || products[0];
+  const product: any = live ?? fallback;
 
   // Mock multiple images for carousel
-  const productImages = [
+  const productImages = (product.imageUrls && product.imageUrls.length ? product.imageUrls : [
     product.image,
     "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&h=600&fit=crop",
     "https://images.unsplash.com/photo-1484704849700-f032a568e944?w=600&h=600&fit=crop",
     "https://images.unsplash.com/photo-1545127398-14699f92334b?w=600&h=600&fit=crop"
-  ];
+  ]) as string[];
 
   const relatedProducts = products.filter(p => p.id !== product.id).slice(0, 6);
 
@@ -145,7 +148,7 @@ const ProductDetails = () => {
               {/* Price */}
               <div className="space-y-2">
                 <div className="flex items-center gap-3">
-                  <span className="text-3xl font-bold text-primary">
+                  <span className="text-3xl font-bold text-secondary">
                     AED {product.price}
                   </span>
                   {product.originalPrice && (
@@ -153,7 +156,7 @@ const ProductDetails = () => {
                       <span className="text-lg text-muted-foreground line-through">
                         AED {product.originalPrice}
                       </span>
-                      <Badge variant="destructive" className="text-sm">
+                      <Badge variant="secondary" className="text-sm bg-flash text-flash-foreground">
                         -{product.discount}% OFF
                       </Badge>
                     </>
@@ -192,9 +195,8 @@ const ProductDetails = () => {
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Button 
                     onClick={handleAddToCart}
-                    variant="outline" 
                     size="lg" 
-                    className="flex-1"
+                    className="flex-1 bg-gradient-to-r from-primary to-secondary text-primary-foreground hover:shadow-glow"
                   >
                     <ShoppingCart className="h-5 w-5 mr-2" />
                     Add to Cart
@@ -202,7 +204,7 @@ const ProductDetails = () => {
                   <Button 
                     onClick={handleBuyNow}
                     size="lg" 
-                    className="flex-1"
+                    className="flex-1 bg-gradient-to-r from-primary to-secondary text-primary-foreground hover:shadow-glow"
                   >
                     Buy Now
                   </Button>

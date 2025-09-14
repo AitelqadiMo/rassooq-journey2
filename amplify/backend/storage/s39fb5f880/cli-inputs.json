@@ -1,0 +1,15 @@
+{
+  "resourceName": "s39fb5f880",
+  "policyUUID": "9fb5f880",
+  "bucketName": "rassooqjourney22ddf3d7a06c64e4fabd4876098448075",
+  "storageAccess": "authAndGuest",
+  "guestAccess": [
+    "READ"
+  ],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ"
+  ],
+  "triggerFunction": "S3Trigger8b43457f",
+  "groupAccess": {}
+}

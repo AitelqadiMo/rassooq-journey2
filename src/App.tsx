@@ -1,5 +1,6 @@
 import { AppProvider } from "@/contexts/AppContext";
 import { AdminProvider } from "@/contexts/AdminContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -75,17 +76,37 @@ import Help from "./pages/Help";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 
+// New Auth Pages
+import SellRequest from "./pages/SellRequest";
+import Unauthorized from "./pages/Unauthorized";
+import BuyerLogin from "./pages/auth/BuyerLogin";
+import SellerLogin from "./pages/auth/SellerLogin";
+import AdminLogin from "./pages/auth/AdminLogin";
+import { SimpleAuthenticator } from "./components/auth/SimpleAuthenticator";
+import { useAuth } from "./contexts/AuthContext";
+
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AppProvider>
-      <AdminProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
+const AppContent = () => {
+  const { user, isLoading } = useAuth();
+  
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading Rassooq...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't force authentication - allow guest browsing
+  // Authentication will be handled by protected routes
+
+  return (
+    <BrowserRouter>
+      <Routes>
             {/* Buyer Storefront Routes */}
             <Route path="/" element={<AppShell><Index /></AppShell>} />
             
@@ -106,11 +127,20 @@ const App = () => (
             <Route path="/order/:orderId" element={<AppShell><OrderConfirmation /></AppShell>} />
             <Route path="/order-confirmation/:orderId" element={<AppShell><OrderConfirmation /></AppShell>} />
             
-            {/* User Account Routes */}
-            <Route path="/login" element={<AppShell><Login /></AppShell>} />
-            <Route path="/account/login" element={<AppShell><Login /></AppShell>} />
-            <Route path="/register" element={<AppShell><Register /></AppShell>} />
-            <Route path="/account/register" element={<AppShell><Register /></AppShell>} />
+            {/* Authentication Routes */}
+            <Route path="/login" element={<BuyerLogin />} />
+            <Route path="/login/buyer" element={<BuyerLogin />} />
+            <Route path="/login/seller" element={<SellerLogin />} />
+            <Route path="/login/admin" element={<AdminLogin />} />
+            <Route path="/account/login" element={<BuyerLogin />} />
+            <Route path="/register" element={<BuyerLogin />} />
+            <Route path="/account/register" element={<BuyerLogin />} />
+            
+            {/* Seller Request Route */}
+            <Route path="/sell" element={<SellRequest />} />
+            
+            {/* Unauthorized Route */}
+            <Route path="/unauthorized" element={<Unauthorized />} />
             <Route path="/profile" element={<AppShell><Profile /></AppShell>} />
             <Route path="/account" element={<AppShell><Profile /></AppShell>} />
             <Route path="/orders" element={<AppShell><Orders /></AppShell>} />
@@ -132,39 +162,36 @@ const App = () => (
             <Route path="/seller/store/:id" element={<AppShell><SellerShop /></AppShell>} />
             
             {/* Seller Portal Routes (guarded) */}
-            <Route element={<ProtectedRoute allowed={["seller", "admin"]} />}>
-              <Route path="/seller/dashboard" element={<AppShell><SellerDashboard /></AppShell>} />
-              <Route path="/seller/catalog" element={<AppShell><SellerCatalog /></AppShell>} />
-              <Route path="/seller/catalog/products" element={<AppShell><SellerProducts /></AppShell>} />
-              <Route path="/seller/catalog/products/new" element={<AppShell><SellerProductForm /></AppShell>} />
-              <Route path="/seller/catalog/products/:id" element={<AppShell><SellerProductForm /></AppShell>} />
-              <Route path="/seller/orders" element={<AppShell><SellerOrders /></AppShell>} />
-              <Route path="/seller/orders/:id" element={<AppShell><SellerOrderDetails /></AppShell>} />
-              <Route path="/seller/returns" element={<AppShell><SellerReturns /></AppShell>} />
-              <Route path="/seller/inventory" element={<AppShell><SellerInventory /></AppShell>} />
-              <Route path="/seller/promotions" element={<AppShell><SellerPromotions /></AppShell>} />
-              <Route path="/seller/payouts" element={<AppShell><SellerPayouts /></AppShell>} />
-              <Route path="/seller/settings" element={<AppShell><SellerSettings /></AppShell>} />
-              <Route path="/seller/staff" element={<AppShell><SellerStaff /></AppShell>} />
-              <Route path="/seller/marketing" element={<AppShell><SellerMarketing /></AppShell>} />
-            </Route>
+            <Route path="/seller/dashboard" element={<ProtectedRoute requiredRole="seller"><AppShell><SellerDashboard /></AppShell></ProtectedRoute>} />
+            <Route path="/seller/catalog" element={<ProtectedRoute requiredRole="seller"><AppShell><SellerCatalog /></AppShell></ProtectedRoute>} />
+            <Route path="/seller/catalog/products" element={<ProtectedRoute requiredRole="seller"><AppShell><SellerProducts /></AppShell></ProtectedRoute>} />
+            <Route path="/seller/catalog/products/new" element={<ProtectedRoute requiredRole="seller"><AppShell><SellerProductForm /></AppShell></ProtectedRoute>} />
+            <Route path="/seller/catalog/products/:id" element={<ProtectedRoute requiredRole="seller"><AppShell><SellerProductForm /></AppShell></ProtectedRoute>} />
+            <Route path="/seller/orders" element={<ProtectedRoute requiredRole="seller"><AppShell><SellerOrders /></AppShell></ProtectedRoute>} />
+            <Route path="/seller/orders/:id" element={<ProtectedRoute requiredRole="seller"><AppShell><SellerOrderDetails /></AppShell></ProtectedRoute>} />
+            <Route path="/seller/returns" element={<ProtectedRoute requiredRole="seller"><AppShell><SellerReturns /></AppShell></ProtectedRoute>} />
+            <Route path="/seller/inventory" element={<ProtectedRoute requiredRole="seller"><AppShell><SellerInventory /></AppShell></ProtectedRoute>} />
+            <Route path="/seller/promotions" element={<ProtectedRoute requiredRole="seller"><AppShell><SellerPromotions /></AppShell></ProtectedRoute>} />
+            <Route path="/seller/payouts" element={<ProtectedRoute requiredRole="seller"><AppShell><SellerPayouts /></AppShell></ProtectedRoute>} />
+            <Route path="/seller/settings" element={<ProtectedRoute requiredRole="seller"><AppShell><SellerSettings /></AppShell></ProtectedRoute>} />
+            <Route path="/seller/staff" element={<ProtectedRoute requiredRole="seller"><AppShell><SellerStaff /></AppShell></ProtectedRoute>} />
+            <Route path="/seller/marketing" element={<ProtectedRoute requiredRole="seller"><AppShell><SellerMarketing /></AppShell></ProtectedRoute>} />
+            <Route path="/seller/messages" element={<ProtectedRoute requiredRole="seller"><AppShell><SellerHelp /></AppShell></ProtectedRoute>} />
             {/* Public seller help and onboarding */}
-            <Route path="/sell" element={<SellerOnboarding />} />
             <Route path="/seller/onboarding" element={<SellerOnboarding />} />
             <Route path="/seller/help" element={<SellerHelp />} />
             
             {/* Admin Backoffice Routes (guarded) */}
-            <Route element={<ProtectedRoute allowed={["admin"]} />}>
-              <Route path="/admin/overview" element={<AppShell><AdminOverview /></AppShell>} />
-              <Route path="/admin/catalog" element={<AppShell><AdminCatalog /></AppShell>} />
-              <Route path="/admin/orders" element={<AppShell><AdminOrders /></AppShell>} />
-              <Route path="/admin/returns" element={<AppShell><AdminReturns /></AppShell>} />
-              <Route path="/admin/sellers" element={<AppShell><AdminSellers /></AppShell>} />
-              <Route path="/admin/users" element={<AppShell><AdminUsers /></AppShell>} />
-              <Route path="/admin/finance" element={<AppShell><AdminFinance /></AppShell>} />
-              <Route path="/admin/cms" element={<AppShell><AdminCMS /></AppShell>} />
-              <Route path="/admin/system" element={<AppShell><AdminSystem /></AppShell>} />
-            </Route>
+            <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><AppShell><AdminOverview /></AppShell></ProtectedRoute>} />
+            <Route path="/admin/overview" element={<ProtectedRoute requiredRole="admin"><AppShell><AdminOverview /></AppShell></ProtectedRoute>} />
+            <Route path="/admin/catalog" element={<ProtectedRoute requiredRole="admin"><AppShell><AdminCatalog /></AppShell></ProtectedRoute>} />
+            <Route path="/admin/orders" element={<ProtectedRoute requiredRole="admin"><AppShell><AdminOrders /></AppShell></ProtectedRoute>} />
+            <Route path="/admin/returns" element={<ProtectedRoute requiredRole="admin"><AppShell><AdminReturns /></AppShell></ProtectedRoute>} />
+            <Route path="/admin/sellers" element={<ProtectedRoute requiredRole="admin"><AppShell><AdminSellers /></AppShell></ProtectedRoute>} />
+            <Route path="/admin/users" element={<ProtectedRoute requiredRole="admin"><AppShell><AdminUsers /></AppShell></ProtectedRoute>} />
+            <Route path="/admin/finance" element={<ProtectedRoute requiredRole="admin"><AppShell><AdminFinance /></AppShell></ProtectedRoute>} />
+            <Route path="/admin/cms" element={<ProtectedRoute requiredRole="admin"><AppShell><AdminCMS /></AppShell></ProtectedRoute>} />
+            <Route path="/admin/system" element={<ProtectedRoute requiredRole="admin"><AppShell><AdminSystem /></AppShell></ProtectedRoute>} />
             
             {/* Static Pages */}
             <Route path="/about" element={<AppShell><About /></AppShell>} />
@@ -179,9 +206,22 @@ const App = () => (
             <Route path="*" element={<AppShell><NotFound /></AppShell>} />
           </Routes>
         </BrowserRouter>
-      </TooltipProvider>
-      </AdminProvider>
-    </AppProvider>
+  );
+};
+
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <AuthProvider>
+      <AppProvider>
+        <AdminProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <AppContent />
+          </TooltipProvider>
+        </AdminProvider>
+      </AppProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 

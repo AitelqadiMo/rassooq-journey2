@@ -1,0 +1,57 @@
+# MVP schema for Rassooq marketplace with proper auth rules
+# - Public read access for storefront
+# - Write access restricted to admin users
+# - Sellers can manage their own products
+
+type Category @model @auth(rules: [
+  { allow: public, operations: [read] },
+  { allow: groups, groups: ["admin"], operations: [create, update, delete] }
+]) {
+  id: ID!
+  name: String!
+  slug: String! @index(name: "bySlug", queryField: "categoryBySlug")
+  parentId: ID
+  products: [Product] @hasMany(indexName: "byCategory", fields: ["id"])
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+type Seller @model @auth(rules: [
+  { allow: public, operations: [read] },
+  { allow: groups, groups: ["seller", "admin"], operations: [create, update, delete] },
+  { allow: owner, operations: [update, delete] }
+]) {
+  id: ID!
+  name: String!
+  slug: String! @index(name: "bySellerSlug", queryField: "sellerBySlug")
+  logoUrl: AWSURL
+  rating: Float
+  products: [Product] @hasMany(indexName: "bySeller", fields: ["id"])
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+type Product @model @auth(rules: [
+  { allow: public, operations: [read] },
+  { allow: groups, groups: ["seller", "admin"], operations: [create, update, delete] },
+  { allow: owner, operations: [update, delete] }
+]) {
+  id: ID!
+  title: String!
+  description: String
+  price: Float!
+  stock: Int!
+  imageUrls: [AWSURL]
+  categoryId: ID! @index(name: "byCategory", sortKeyFields: ["title"]) 
+  sellerId: ID! @index(name: "bySeller", sortKeyFields: ["title"])
+  # Simple search by title - for basic search functionality
+  searchTitle: String @index(name: "bySearchTitle", sortKeyFields: ["title"], queryField: "searchProducts")
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+# Auth Rules Applied:
+# - Categories: Public read, Admin write
+# - Sellers: Public read, Seller/Admin create, Owner/Admin update/delete  
+# - Products: Public read, Seller/Admin create, Owner/Admin update/delete
+# - Owner field is automatically added by Amplify for owner-based auth

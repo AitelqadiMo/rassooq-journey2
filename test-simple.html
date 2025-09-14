@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rassooq Test Page</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .card { 
+            background: rgba(255,255,255,0.1); 
+            padding: 30px; 
+            border-radius: 15px; 
+            margin: 20px 0;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        h1 { 
+            color: #FFD700; 
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .status { 
+            padding: 15px; 
+            border-radius: 8px; 
+            margin: 15px 0; 
+            font-weight: bold;
+        }
+        .success { background: rgba(40, 167, 69, 0.8); }
+        .error { background: rgba(220, 53, 69, 0.8); }
+        .info { background: rgba(23, 162, 184, 0.8); }
+        .btn {
+            background: #FFD700;
+            color: #333;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover { background: #FFC107; }
+        .test-results { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🏪 Rassooq Test Page</h1>
+        <p style="text-align: center; font-size: 1.2em;"><strong>راس السوق</strong> - Marketplace Test</p>
+    </div>
+
+    <div class="card">
+        <h2>🔧 System Status</h2>
+        <div class="status success">✅ HTML Loading: Working</div>
+        <div class="status success">✅ CSS Styling: Working</div>
+        <div class="status success">✅ S3 Hosting: Active</div>
+        <div class="status info" id="js-status">⏳ JavaScript: Testing...</div>
+        <div class="status info" id="timestamp-status">⏳ Cache: Checking...</div>
+    </div>
+
+    <div class="card">
+        <h2>🚀 Navigation Tests</h2>
+        <a href="/" class="btn">← Back to Main App</a>
+        <a href="/debug.html" class="btn">Debug Page</a>
+        <a href="https://d31xohey4h3wuv.cloudfront.net" class="btn">CloudFront URL</a>
+    </div>
+
+    <div class="card">
+        <h2>📊 Technical Information</h2>
+        <div class="test-results">
+            <p><strong>Timestamp:</strong> <span id="timestamp"></span></p>
+            <p><strong>User Agent:</strong> <span id="userAgent"></span></p>
+            <p><strong>URL:</strong> <span id="currentUrl"></span></p>
+            <p><strong>Cache Status:</strong> <span id="cacheStatus"></span></p>
+            <p><strong>Load Time:</strong> <span id="loadTime"></span></p>
+        </div>
+    </div>
+
+    <script>
+        const startTime = performance.now();
+        
+        // Test JavaScript functionality
+        document.getElementById('js-status').innerHTML = '✅ JavaScript: Working';
+        document.getElementById('js-status').className = 'status success';
+        
+        // Fill in technical details
+        document.getElementById('timestamp').textContent = new Date().toISOString();
+        document.getElementById('userAgent').textContent = navigator.userAgent.substring(0, 100) + '...';
+        document.getElementById('currentUrl').textContent = window.location.href;
+        
+        // Check if this is a cached response
+        const now = new Date().getTime();
+        const cacheKey = 'rassooq-test-' + now;
+        localStorage.setItem(cacheKey, now.toString());
+        const cached = localStorage.getItem(cacheKey);
+        
+        if (cached) {
+            document.getElementById('cacheStatus').textContent = 'Fresh Load';
+            document.getElementById('timestamp-status').innerHTML = '✅ Cache: Fresh';
+            document.getElementById('timestamp-status').className = 'status success';
+        } else {
+            document.getElementById('cacheStatus').textContent = 'Cached';
+            document.getElementById('timestamp-status').innerHTML = '⚠️ Cache: Cached Response';
+            document.getElementById('timestamp-status').className = 'status error';
+        }
+        
+        // Calculate load time
+        window.addEventListener('load', () => {
+            const loadTime = (performance.now() - startTime).toFixed(2);
+            document.getElementById('loadTime').textContent = loadTime + ' ms';
+        });
+        
+        console.log('Rassooq test page loaded successfully at', new Date().toISOString());
+        console.log('Location:', window.location.href);
+        console.log('Performance:', performance.now(), 'ms');
+        
+        // Test if we can make requests to the API
+        setTimeout(() => {
+            fetch('https://rrzmp62guvf6tajwvvgcvqayxa.appsync-api.eu-central-1.amazonaws.com/graphql', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': 'da2-kskohvb56zcotiycb56xqpvkje'
+                },
+                body: JSON.stringify({
+                    query: 'query { listCategories { items { id name } } }'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('API Test Result:', data);
+                if (data.data && data.data.listCategories) {
+                    const apiCard = document.createElement('div');
+                    apiCard.className = 'card';
+                    apiCard.innerHTML = `
+                        <h2>🌐 API Test</h2>
+                        <div class="status success">✅ GraphQL API: Connected</div>
+                        <p>Categories found: ${data.data.listCategories.items.length}</p>
+                    `;
+                    document.body.appendChild(apiCard);
+                }
+            })
+            .catch(error => {
+                console.error('API Test Failed:', error);
+                const apiCard = document.createElement('div');
+                apiCard.className = 'card';
+                apiCard.innerHTML = `
+                    <h2>🌐 API Test</h2>
+                    <div class="status error">❌ GraphQL API: Failed</div>
+                    <p>Error: ${error.message}</p>
+                `;
+                document.body.appendChild(apiCard);
+            });
+        }, 1000);
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,18 @@
+<svg width="671" height="754" viewBox="0 0 671 754" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Main logo structure based on the provided image -->
+  <!-- Orange/Gold roof -->
+  <path d="M335.5 100 L450 180 L220 180 Z" fill="#D4941E"/>
+  
+  <!-- Blue building structure -->
+  <path d="M220 180 L450 180 L450 470 L380 470 L380 320 L290 320 L290 470 L220 470 Z" fill="#1B4B82"/>
+  
+  <!-- Door/entrance -->
+  <path d="M290 320 L380 320 L380 470 L290 470 Z" fill="#FFFFFF"/>
+  
+  <!-- Text "Rassooq" -->
+  <text x="335" y="550" text-anchor="middle" font-family="Arial, sans-serif" font-size="80" font-weight="bold" fill="#1B4B82">Rassooq</text>
+  
+  <!-- Arabic text "راس السوق" -->
+  <text x="335" y="620" text-anchor="middle" font-family="Arial, sans-serif" font-size="40" fill="#1B4B82">راس السوق</text>
+</svg>
+

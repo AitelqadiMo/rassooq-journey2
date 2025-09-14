@@ -19,4 +19,23 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        // Force completely new asset names on each build
+        entryFileNames: `assets/app-${Date.now()}-[hash].js`,
+        chunkFileNames: `assets/chunk-${Date.now()}-[hash].js`,
+        assetFileNames: `assets/style-${Date.now()}-[hash].[ext]`,
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          amplify: ['aws-amplify', '@aws-amplify/ui-react', '@aws-amplify/ui-react-core'],
+          ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-select'],
+          router: ['react-router-dom'],
+          query: ['@tanstack/react-query'],
+          icons: ['lucide-react'],
+          animation: ['framer-motion'],
+        }
+      }
+    }
+  }
 }));

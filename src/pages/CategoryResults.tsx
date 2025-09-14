@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { products, categories } from "@/data/mock-data";
+import { useAmplifyCategoryProducts } from "@/hooks/use-amplify-category-products";
 import { Grid, List, ChevronDown } from "lucide-react";
 
 const CategoryResults = () => {
@@ -24,8 +25,9 @@ const CategoryResults = () => {
   // Find category info
   const categoryInfo = categories.find(c => c.id === category);
   
-  // Filter products by category (in real app, this would be an API call)
-  const filteredProducts = products; // TODO: tie to category in mock-data if available
+  // Prefer live category products; fallback to mocks
+  const { items: liveProducts } = useAmplifyCategoryProducts({ categoryIdOrSlug: category });
+  const filteredProducts = liveProducts.length ? liveProducts : products;
   
   const sortOptions = [
     { value: "relevance", label: "Relevance" },

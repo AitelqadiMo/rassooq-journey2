@@ -12,8 +12,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { products } from "@/data/mock-data";
-import { Grid, List, Search } from "lucide-react";
+// import { products } from "@/data/mock-data";
+import { useAmplifySearch, useAmplifyAllProducts } from "@/hooks/use-amplify-search";
+import { Grid, List, Search, Loader2 } from "lucide-react";
 
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
@@ -21,11 +22,26 @@ const SearchResults = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">((new URLSearchParams(location.search).get('view') as any) || "grid");
   const [sortBy, setSortBy] = useState(new URLSearchParams(location.search).get('sort') || "relevance");
 
-  // Filter products by search query (basic mock implementation)
-  const filteredProducts = products.filter(product => 
-    product.title.toLowerCase().includes(query.toLowerCase()) ||
-    product.brand.toLowerCase().includes(query.toLowerCase())
-  );
+  // Use Amplify search when query exists, otherwise show all products
+  const { results: searchResults, loading: searchLoading, error: searchError } = useAmplifySearch(query);
+  const { items: allProducts, loading: allLoading } = useAmplifyAllProducts(50);
+  
+  // Use search results if query exists and has results, otherwise fallback to mock data
+  const hasQuery = query.length >= 2;
+  const amplifyProducts = hasQuery ? searchResults : allProducts;
+  const loading = hasQuery ? searchLoading : allLoading;
+  
+  // Map Amplify products to UI format or use mock data as fallback
+  const filteredProducts = amplifyProducts.length > 0 ? amplifyProducts.map(product => ({
+    id: product.id,
+    title: product.title,
+    brand: 'Brand', // Default brand since not in schema
+    price: product.price,
+    image: product.imageUrls?.[0] || 'https://picsum.photos/seed/' + product.id + '/400/300',
+    rating: 4.5, // Default rating
+    reviewCount: 0, // Default review count
+    badges: [] as string[],
+  })) : [];  // No fallback to mock data - use only real data
   
   const sortOptions = [
     { value: "relevance", label: "Relevance" },
@@ -75,7 +91,14 @@ const SearchResults = () => {
             </div>
             
             <p className="text-muted-foreground">
-              {filteredProducts.length} products found
+              {loading ? (
+                <span className="flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Searching...
+                </span>
+              ) : (
+                `${filteredProducts.length} products found`
+              )}
             </p>
 
             {/* Did you mean / suggestions */}

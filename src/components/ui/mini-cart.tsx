@@ -9,11 +9,11 @@ export function MiniCart({ open, onOpenChange }: { open: boolean; onOpenChange: 
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-96">
+      <SheetContent side="right" className="w-96" role="dialog" aria-label="Mini cart">
         <SheetHeader>
           <SheetTitle>Cart ({items.length})</SheetTitle>
         </SheetHeader>
-        <div className="mt-4 flex flex-col h-full">
+        <div className="mt-4 flex flex-col h-full" role="region" aria-live="polite">
           <div className="flex-1 space-y-3 overflow-auto pr-2">
             {items.length === 0 && (
               <div className="text-sm text-muted-foreground">Your cart is empty.</div>
@@ -22,7 +22,7 @@ export function MiniCart({ open, onOpenChange }: { open: boolean; onOpenChange: 
               <Card key={item.id}>
                 <CardContent className="p-3">
                   <div className="flex gap-3">
-                    <img src={item.image} alt={item.title} className="w-16 h-16 rounded object-cover" />
+                    <img src={item.image} alt={item.title} className="w-16 h-16 rounded object-cover" loading="lazy" />
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium line-clamp-2">{item.title}</div>
                       <div className="text-xs text-muted-foreground">AED {item.price}</div>
@@ -43,9 +43,14 @@ export function MiniCart({ open, onOpenChange }: { open: boolean; onOpenChange: 
               <span>Total</span>
               <span>AED {total.toFixed(0)}</span>
             </div>
-            <Link to="/cart" onClick={() => onOpenChange(false)}>
-              <Button className="w-full" disabled={items.length === 0}>View Cart</Button>
-            </Link>
+            <div className="grid grid-cols-2 gap-2">
+              <Link to="/cart" onClick={() => onOpenChange(false)}>
+                <Button variant="secondary" className="w-full" disabled={items.length === 0}>View Cart</Button>
+              </Link>
+              <Link to="/checkout" onClick={() => onOpenChange(false)}>
+                <Button className="w-full bg-gradient-to-r from-primary to-secondary text-primary-foreground hover:shadow-glow" disabled={items.length === 0}>Checkout</Button>
+              </Link>
+            </div>
           </div>
         </div>
       </SheetContent>
