@@ -5,7 +5,7 @@
  **************************************************************************/
 
 import * as React from "react";
-import { GridProps, TextFieldProps } from "@aws-amplify/ui-react";
+import { GridProps, SwitchFieldProps, TextFieldProps } from "@aws-amplify/ui-react";
 export declare type EscapeHatchProps = {
     [elementHierarchy: string]: Record<string, unknown>;
 } | null;
@@ -24,14 +24,22 @@ export declare type ValidationFunction<T> = (value: T, validationResponse: Valid
 export declare type CategoryCreateFormInputValues = {
     name?: string;
     slug?: string;
+    description?: string;
+    imageUrl?: string;
     parentId?: string;
+    isActive?: boolean;
+    displayOrder?: number;
     createdAt?: string;
     updatedAt?: string;
 };
 export declare type CategoryCreateFormValidationValues = {
     name?: ValidationFunction<string>;
     slug?: ValidationFunction<string>;
+    description?: ValidationFunction<string>;
+    imageUrl?: ValidationFunction<string>;
     parentId?: ValidationFunction<string>;
+    isActive?: ValidationFunction<boolean>;
+    displayOrder?: ValidationFunction<number>;
     createdAt?: ValidationFunction<string>;
     updatedAt?: ValidationFunction<string>;
 };
@@ -40,7 +48,11 @@ export declare type CategoryCreateFormOverridesProps = {
     CategoryCreateFormGrid?: PrimitiveOverrideProps<GridProps>;
     name?: PrimitiveOverrideProps<TextFieldProps>;
     slug?: PrimitiveOverrideProps<TextFieldProps>;
+    description?: PrimitiveOverrideProps<TextFieldProps>;
+    imageUrl?: PrimitiveOverrideProps<TextFieldProps>;
     parentId?: PrimitiveOverrideProps<TextFieldProps>;
+    isActive?: PrimitiveOverrideProps<SwitchFieldProps>;
+    displayOrder?: PrimitiveOverrideProps<TextFieldProps>;
     createdAt?: PrimitiveOverrideProps<TextFieldProps>;
     updatedAt?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;

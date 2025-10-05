@@ -6,7 +6,13 @@
 
 /* eslint-disable */
 import * as React from "react";
-import { Button, Flex, Grid, TextField } from "@aws-amplify/ui-react";
+import {
+  Button,
+  Flex,
+  Grid,
+  SwitchField,
+  TextField,
+} from "@aws-amplify/ui-react";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { generateClient } from "aws-amplify/api";
 import { getCategory } from "../graphql/queries";
@@ -27,13 +33,25 @@ export default function CategoryUpdateForm(props) {
   const initialValues = {
     name: "",
     slug: "",
+    description: "",
+    imageUrl: "",
     parentId: "",
+    isActive: false,
+    displayOrder: "",
     createdAt: "",
     updatedAt: "",
   };
   const [name, setName] = React.useState(initialValues.name);
   const [slug, setSlug] = React.useState(initialValues.slug);
+  const [description, setDescription] = React.useState(
+    initialValues.description
+  );
+  const [imageUrl, setImageUrl] = React.useState(initialValues.imageUrl);
   const [parentId, setParentId] = React.useState(initialValues.parentId);
+  const [isActive, setIsActive] = React.useState(initialValues.isActive);
+  const [displayOrder, setDisplayOrder] = React.useState(
+    initialValues.displayOrder
+  );
   const [createdAt, setCreatedAt] = React.useState(initialValues.createdAt);
   const [updatedAt, setUpdatedAt] = React.useState(initialValues.updatedAt);
   const [errors, setErrors] = React.useState({});
@@ -43,7 +61,11 @@ export default function CategoryUpdateForm(props) {
       : initialValues;
     setName(cleanValues.name);
     setSlug(cleanValues.slug);
+    setDescription(cleanValues.description);
+    setImageUrl(cleanValues.imageUrl);
     setParentId(cleanValues.parentId);
+    setIsActive(cleanValues.isActive);
+    setDisplayOrder(cleanValues.displayOrder);
     setCreatedAt(cleanValues.createdAt);
     setUpdatedAt(cleanValues.updatedAt);
     setErrors({});
@@ -67,7 +89,11 @@ export default function CategoryUpdateForm(props) {
   const validations = {
     name: [{ type: "Required" }],
     slug: [{ type: "Required" }],
+    description: [],
+    imageUrl: [{ type: "URL" }],
     parentId: [],
+    isActive: [{ type: "Required" }],
+    displayOrder: [],
     createdAt: [],
     updatedAt: [],
   };
@@ -116,7 +142,11 @@ export default function CategoryUpdateForm(props) {
         let modelFields = {
           name,
           slug,
+          description: description ?? null,
+          imageUrl: imageUrl ?? null,
           parentId: parentId ?? null,
+          isActive,
+          displayOrder: displayOrder ?? null,
           createdAt: createdAt ?? null,
           updatedAt: updatedAt ?? null,
         };
@@ -181,7 +211,11 @@ export default function CategoryUpdateForm(props) {
             const modelFields = {
               name: value,
               slug,
+              description,
+              imageUrl,
               parentId,
+              isActive,
+              displayOrder,
               createdAt,
               updatedAt,
             };
@@ -209,7 +243,11 @@ export default function CategoryUpdateForm(props) {
             const modelFields = {
               name,
               slug: value,
+              description,
+              imageUrl,
               parentId,
+              isActive,
+              displayOrder,
               createdAt,
               updatedAt,
             };
@@ -227,6 +265,70 @@ export default function CategoryUpdateForm(props) {
         {...getOverrideProps(overrides, "slug")}
       ></TextField>
       <TextField
+        label="Description"
+        isRequired={false}
+        isReadOnly={false}
+        value={description}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              name,
+              slug,
+              description: value,
+              imageUrl,
+              parentId,
+              isActive,
+              displayOrder,
+              createdAt,
+              updatedAt,
+            };
+            const result = onChange(modelFields);
+            value = result?.description ?? value;
+          }
+          if (errors.description?.hasError) {
+            runValidationTasks("description", value);
+          }
+          setDescription(value);
+        }}
+        onBlur={() => runValidationTasks("description", description)}
+        errorMessage={errors.description?.errorMessage}
+        hasError={errors.description?.hasError}
+        {...getOverrideProps(overrides, "description")}
+      ></TextField>
+      <TextField
+        label="Image url"
+        isRequired={false}
+        isReadOnly={false}
+        value={imageUrl}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              name,
+              slug,
+              description,
+              imageUrl: value,
+              parentId,
+              isActive,
+              displayOrder,
+              createdAt,
+              updatedAt,
+            };
+            const result = onChange(modelFields);
+            value = result?.imageUrl ?? value;
+          }
+          if (errors.imageUrl?.hasError) {
+            runValidationTasks("imageUrl", value);
+          }
+          setImageUrl(value);
+        }}
+        onBlur={() => runValidationTasks("imageUrl", imageUrl)}
+        errorMessage={errors.imageUrl?.errorMessage}
+        hasError={errors.imageUrl?.hasError}
+        {...getOverrideProps(overrides, "imageUrl")}
+      ></TextField>
+      <TextField
         label="Parent id"
         isRequired={false}
         isReadOnly={false}
@@ -237,7 +339,11 @@ export default function CategoryUpdateForm(props) {
             const modelFields = {
               name,
               slug,
+              description,
+              imageUrl,
               parentId: value,
+              isActive,
+              displayOrder,
               createdAt,
               updatedAt,
             };
@@ -254,6 +360,74 @@ export default function CategoryUpdateForm(props) {
         hasError={errors.parentId?.hasError}
         {...getOverrideProps(overrides, "parentId")}
       ></TextField>
+      <SwitchField
+        label="Is active"
+        defaultChecked={false}
+        isDisabled={false}
+        isChecked={isActive}
+        onChange={(e) => {
+          let value = e.target.checked;
+          if (onChange) {
+            const modelFields = {
+              name,
+              slug,
+              description,
+              imageUrl,
+              parentId,
+              isActive: value,
+              displayOrder,
+              createdAt,
+              updatedAt,
+            };
+            const result = onChange(modelFields);
+            value = result?.isActive ?? value;
+          }
+          if (errors.isActive?.hasError) {
+            runValidationTasks("isActive", value);
+          }
+          setIsActive(value);
+        }}
+        onBlur={() => runValidationTasks("isActive", isActive)}
+        errorMessage={errors.isActive?.errorMessage}
+        hasError={errors.isActive?.hasError}
+        {...getOverrideProps(overrides, "isActive")}
+      ></SwitchField>
+      <TextField
+        label="Display order"
+        isRequired={false}
+        isReadOnly={false}
+        type="number"
+        step="any"
+        value={displayOrder}
+        onChange={(e) => {
+          let value = isNaN(parseInt(e.target.value))
+            ? e.target.value
+            : parseInt(e.target.value);
+          if (onChange) {
+            const modelFields = {
+              name,
+              slug,
+              description,
+              imageUrl,
+              parentId,
+              isActive,
+              displayOrder: value,
+              createdAt,
+              updatedAt,
+            };
+            const result = onChange(modelFields);
+            value = result?.displayOrder ?? value;
+          }
+          if (errors.displayOrder?.hasError) {
+            runValidationTasks("displayOrder", value);
+          }
+          setDisplayOrder(value);
+        }}
+        onBlur={() => runValidationTasks("displayOrder", displayOrder)}
+        errorMessage={errors.displayOrder?.errorMessage}
+        hasError={errors.displayOrder?.hasError}
+        {...getOverrideProps(overrides, "displayOrder")}
+      ></TextField>
       <TextField
         label="Created at"
         isRequired={false}
@@ -267,7 +441,11 @@ export default function CategoryUpdateForm(props) {
             const modelFields = {
               name,
               slug,
+              description,
+              imageUrl,
               parentId,
+              isActive,
+              displayOrder,
               createdAt: value,
               updatedAt,
             };
@@ -297,7 +475,11 @@ export default function CategoryUpdateForm(props) {
             const modelFields = {
               name,
               slug,
+              description,
+              imageUrl,
               parentId,
+              isActive,
+              displayOrder,
               createdAt,
               updatedAt: value,
             };

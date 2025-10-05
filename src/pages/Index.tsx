@@ -45,82 +45,83 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden pt-16 sm:pt-20 md:pt-24">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       <Header />
-      
+
       {/* Full-Width Immersive Hero Banner */}
-      <section 
+      <section
         ref={heroRef}
-        className="relative h-screen w-full flex items-center overflow-hidden"
+        className="relative h-screen w-screen flex items-center justify-center overflow-hidden"
         style={{
           transform: `translateY(${scrollY * 0.3}px)`,
         }}
       >
-        {/* Dynamic Gradient Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-orange-500 to-yellow-400 opacity-90" />
-        <div className="absolute inset-0 bg-gradient-mesh opacity-60" />
-        
+        {/* Dynamic Gradient Background with Better Contrast */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-orange-500 to-yellow-400" />
+        <div className="absolute inset-0 bg-black/30" />
+        <div className="absolute inset-0 bg-gradient-mesh opacity-40" />
+
         {/* Hero Content */}
-        <div className="max-w-7xl mx-auto px-8 lg:px-12 relative z-10">
+        <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-24 relative z-10 max-w-7xl mx-auto">
           <motion.div
-            className="inline-flex items-center gap-3 glass-premium px-6 py-3 rounded-full text-sm font-semibold mb-8"
+            className="flex justify-center mb-8"
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
           >
-            <Sparkles className="w-5 h-5 text-orange-300" />
-            <span>Premium Marketplace Experience</span>
+            <div className="inline-flex items-center gap-3 bg-white/20 backdrop-blur-md px-6 py-3 rounded-full text-sm font-semibold text-white shadow-lg">
+              <Sparkles className="w-5 h-5" />
+              <span>Premium Marketplace Experience</span>
+            </div>
           </motion.div>
-          <motion.div 
-            className="text-center mb-20"
+          <motion.div
+            className="text-center"
             initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
           >
-            <h1 className="font-display text-5xl md:text-7xl font-bold mb-6">
-              <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-                RASSOOQ
-              </span>
+            <h1 className="font-display text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold mb-8 text-white drop-shadow-2xl">
+              RASSOOQ
             </h1>
-            <p className="text-2xl md:text-3xl lg:text-4xl font-light mb-12 leading-relaxed max-w-3xl">
-              Where <span className="font-semibold text-orange-300">Innovation</span> meets{" "}
-              <span className="font-semibold text-yellow-300">Commerce</span>
+            <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-light mb-12 leading-relaxed text-white drop-shadow-lg max-w-4xl mx-auto">
+              Where <span className="font-bold text-yellow-300">Innovation</span> meets{" "}
+              <span className="font-bold text-orange-300">Commerce</span>
               <br />
-              <span className="text-white/80 text-xl md:text-2xl">Discover • Experience • Transcend</span>
+              <span className="text-white/90 text-lg md:text-xl lg:text-2xl">Discover • Experience • Transcend</span>
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button 
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
+              <Button
                 size="lg"
                 onClick={() => navigate('/categories')}
-                className="glass-premium hover:bg-white/30 hover:shadow-glow text-white border-white/20 px-12 py-6 text-xl font-semibold rounded-2xl transition-all duration-500 hover:scale-105 group"
+                className="bg-orange-500 hover:bg-orange-600 text-white border-0 px-8 sm:px-12 py-4 sm:py-6 text-lg sm:text-xl font-semibold rounded-full shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-orange-500/50 group w-full sm:w-auto"
               >
                 Explore Collection
-                <ArrowRight className="ml-3 h-6 w-6 group-hover:translate-x-2 transition-transform" />
+                <ArrowRight className="ml-3 h-5 w-5 sm:h-6 sm:w-6 group-hover:translate-x-2 transition-transform" />
               </Button>
-              <Button 
+              <Button
                 size="lg"
                 variant="outline"
                 onClick={() => navigate('/plus')}
-                className="glass-card border-white/30 text-white hover:bg-white/10 px-12 py-6 text-xl font-semibold rounded-2xl transition-all duration-500 hover:scale-105"
+                className="bg-white/10 backdrop-blur-md border-2 border-white/50 text-white hover:bg-white/20 px-8 sm:px-12 py-4 sm:py-6 text-lg sm:text-xl font-semibold rounded-full shadow-2xl transition-all duration-300 hover:scale-105 w-full sm:w-auto"
               >
                 Join Rassooq+
-                <Sparkles className="ml-3 h-6 w-6" />
+                <Sparkles className="ml-3 h-5 w-5 sm:h-6 sm:w-6" />
               </Button>
             </div>
           </motion.div>
         </div>
       </section>
 
-      <main className="relative z-10 bg-background w-full">
+      <main className="relative z-10 bg-background w-screen">
         {/* Category Highlights - Full Width */}
-        <motion.section 
-          className="py-24 w-full bg-gradient-to-br from-background via-primary/5 to-secondary/5"
+        <motion.section
+          className="py-16 md:py-24 w-screen bg-gradient-to-br from-background via-primary/5 to-secondary/5"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
         >
-          <div className="max-w-7xl mx-auto px-8 lg:px-12">
+          <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16">
             <motion.div 
               className="text-center mb-20"
               initial={{ opacity: 0, y: 50 }}
@@ -177,14 +178,14 @@ const Index = () => {
         </motion.section>
 
         {/* Trending Products - Full Width */}
-        <motion.section 
-          className="py-24 w-full bg-gradient-subtle"
+        <motion.section
+          className="py-16 md:py-24 w-screen bg-gradient-subtle"
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
         >
-          <div className="max-w-7xl mx-auto px-8 lg:px-12">
+          <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16">
             <div className="text-center mb-16">
               <div className="inline-flex items-center gap-3 bg-orange-500/10 text-orange-600 px-6 py-3 rounded-full mb-4">
                 <TrendingUp className="h-5 w-5" />
@@ -205,15 +206,15 @@ const Index = () => {
         </motion.section>
 
         {/* Featured Brands - Full Width Glassmorphic Strip */}
-        <motion.section 
-          className="py-24 w-full relative overflow-hidden"
+        <motion.section
+          className="py-16 md:py-24 w-screen relative overflow-hidden"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
         >
           <div className="absolute inset-0 bg-gradient-mesh opacity-30" />
-          <div className="max-w-7xl mx-auto px-8 lg:px-12 relative z-10">
+          <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 relative z-10">
             <div className="text-center mb-16">
               <h2 className="font-display text-5xl md:text-6xl font-bold text-foreground mb-4">
                 Official Stores
@@ -227,14 +228,14 @@ const Index = () => {
         </motion.section>
 
         {/* New Arrivals */}
-        <motion.section 
-          className="py-24 w-full bg-gradient-subtle"
+        <motion.section
+          className="py-16 md:py-24 w-screen bg-gradient-subtle"
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
         >
-          <div className="max-w-7xl mx-auto px-8 lg:px-12">
+          <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16">
             <div className="text-center mb-16">
               <div className="inline-flex items-center gap-3 bg-tertiary/10 text-tertiary px-6 py-3 rounded-full mb-4">
                 <Sparkles className="h-5 w-5" />

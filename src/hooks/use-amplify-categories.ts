@@ -61,3 +61,4 @@ export function useAmplifyCategories(limit = 20) {
   return { categories, loading, error }
 }
 
+

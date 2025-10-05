@@ -53,7 +53,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log('User groups:', groups);
       setUserGroups(groups);
     } catch (error) {
-      console.log('No authenticated user:', error);
+      // User not authenticated - this is normal, not an error
+      console.log('No authenticated user');
       setUser(null);
       setUserGroups([]);
     } finally {

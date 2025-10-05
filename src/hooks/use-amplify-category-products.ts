@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { generateClient } from 'aws-amplify/api'
-import { productsByCategoryIdAndTitle, categoryBySlug } from '@/graphql/queries'
+import { productsByCategoryIdAndCreatedAt, categoryBySlug } from '@/graphql/queries'
 
 type UiProduct = {
   id: string
@@ -36,10 +36,10 @@ export function useAmplifyCategoryProducts(params: { categoryIdOrSlug?: string; 
         } catch {}
 
         const res2 = await client.graphql({
-          query: productsByCategoryIdAndTitle as any,
+          query: productsByCategoryIdAndCreatedAt as any,
           variables: { categoryId: catId, limit },
         }) as any
-        const data = res2?.data?.productsByCategoryIdAndTitle?.items ?? []
+        const data = res2?.data?.productsByCategoryIdAndCreatedAt?.items ?? []
         const mapped: UiProduct[] = data.map((p: any) => ({
           id: p.id,
           title: p.title,

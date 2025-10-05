@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(for id in I6QKFP8IIXW6JGSNGYJ9BTBFBM I1WHWL3DTEGD0OFH38SFDJIPB3 IA91Y7KJIKOORVW00DJ6BQ5IDW)",
+      "Bash(do echo \"Invalidation $id:\")",
+      "Bash(npm run build:*)",
+      "Bash(npm run dev:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nfix(build): resolve JSX tag mismatch in header component\n\n- Fixed motion.div closing tag mismatch in header.tsx that was causing build failures\n- Added comprehensive cart functionality with CartDrawer component\n- Enhanced backend setup with seed scripts and Cognito group configuration\n- Added deployment checklist and backend setup documentation\n- Implemented admin log and promo code UI components\n- Added product detail components for enhanced catalog management\n- Included test pages and utility scripts for development\n\nBuild Status: ✅ Production build successful (3,883 modules)\nDev Server: ✅ Running without errors\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

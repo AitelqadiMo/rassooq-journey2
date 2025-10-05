@@ -1,7 +1,151 @@
-# MVP schema for Rassooq marketplace with proper auth rules
-# - Public read access for storefront
-# - Write access restricted to admin users
-# - Sellers can manage their own products
+# Complete Rassooq E-Commerce Platform GraphQL Schema
+# 22 Models with proper auth rules and bidirectional relationships
+
+# ========================================
+# ENUMS
+# ========================================
+
+enum UserRole {
+  ADMIN
+  SELLER
+  BUYER
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum PaymentMethodType {
+  CREDIT_CARD
+  DEBIT_CARD
+  PAYPAL
+  BANK_TRANSFER
+  CASH_ON_DELIVERY
+}
+
+enum ReturnStatus {
+  REQUESTED
+  APPROVED
+  REJECTED
+  COMPLETED
+}
+
+enum ReturnReason {
+  DEFECTIVE
+  WRONG_ITEM
+  NOT_AS_DESCRIBED
+  CHANGED_MIND
+  OTHER
+}
+
+enum NotificationType {
+  ORDER_UPDATE
+  PAYMENT_RECEIVED
+  REVIEW_POSTED
+  RETURN_STATUS
+  PROMO_CODE
+  GENERAL
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED_AMOUNT
+  FREE_SHIPPING
+}
+
+enum AdminActionType {
+  USER_CREATED
+  USER_UPDATED
+  USER_DELETED
+  SELLER_APPROVED
+  SELLER_SUSPENDED
+  PRODUCT_REMOVED
+  ORDER_MODIFIED
+  REFUND_PROCESSED
+  SYSTEM_CONFIG
+}
+
+# ========================================
+# 1. USER MODEL
+# ========================================
+
+type User @model @auth(rules: [
+  { allow: public, operations: [read] },
+  { allow: owner, operations: [read, update, delete] },
+  { allow: groups, groups: ["admin"], operations: [create, read, update, delete] }
+]) {
+  id: ID!
+  cognitoId: String! @index(name: "byCognitoId", queryField: "userByCognitoId")
+  email: AWSEmail!
+  name: String!
+  phone: AWSPhone
+  role: UserRole!
+  isActive: Boolean!
+  isPlusMember: Boolean
+  profilePictureUrl: AWSURL
+
+  # Relationships
+  addresses: [Address] @hasMany(indexName: "byUser", fields: ["id"])
+  cart: Cart @hasOne(fields: ["id"])
+  wishlistItems: [WishlistItem] @hasMany(indexName: "byUser", fields: ["id"])
+  orders: [Order] @hasMany(indexName: "byUser", fields: ["id"])
+  reviews: [Review] @hasMany(indexName: "byUser", fields: ["id"])
+  returns: [Return] @hasMany(indexName: "byUser", fields: ["id"])
+  notifications: [Notification] @hasMany(indexName: "byUser", fields: ["id"])
+  paymentMethods: [PaymentMethod] @hasMany(indexName: "byUser", fields: ["id"])
+  promoCodeUsages: [PromoCodeUsage] @hasMany(indexName: "byUser", fields: ["id"])
+  plusSubscription: PlusSubscription @hasOne(fields: ["id"])
+
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+# ========================================
+# 2. ADDRESS MODEL
+# ========================================
+
+type Address @model @auth(rules: [
+  { allow: owner, operations: [create, read, update, delete] },
+  { allow: groups, groups: ["admin"], operations: [create, read, update, delete] }
+]) {
+  id: ID!
+  userId: ID! @index(name: "byUser", sortKeyFields: ["createdAt"])
+  user: User @belongsTo(fields: ["userId"])
+
+  label: String
+  fullName: String!
+  addressLine1: String!
+  addressLine2: String
+  city: String!
+  state: String
+  postalCode: String!
+  country: String!
+  phone: AWSPhone
+  isDefault: Boolean
+
+  # Relationships
+  shippingOrders: [Order] @hasMany(indexName: "byShippingAddress", fields: ["id"])
+  billingPaymentMethods: [PaymentMethod] @hasMany(indexName: "byBillingAddress", fields: ["id"])
+
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+# ========================================
+# 3. CATEGORY MODEL (ENHANCED)
+# ========================================
 
 type Category @model @auth(rules: [
   { allow: public, operations: [read] },
@@ -10,11 +154,22 @@ type Category @model @auth(rules: [
   id: ID!
   name: String!
   slug: String! @index(name: "bySlug", queryField: "categoryBySlug")
+  description: String
+  imageUrl: AWSURL
   parentId: ID
+  isActive: Boolean!
+  displayOrder: Int
+
+  # Relationships
   products: [Product] @hasMany(indexName: "byCategory", fields: ["id"])
+
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
 }
+
+# ========================================
+# 4. SELLER MODEL (ENHANCED)
+# ========================================
 
 type Seller @model @auth(rules: [
   { allow: public, operations: [read] },
@@ -24,12 +179,36 @@ type Seller @model @auth(rules: [
   id: ID!
   name: String!
   slug: String! @index(name: "bySellerSlug", queryField: "sellerBySlug")
+  email: AWSEmail!
+  phone: AWSPhone
   logoUrl: AWSURL
+  bannerUrl: AWSURL
+  description: String
   rating: Float
+  totalReviews: Int
+  isVerified: Boolean!
+  isActive: Boolean!
+
+  # Business details
+  businessName: String
+  taxId: String
+  businessAddress: String
+
+  # Relationships
   products: [Product] @hasMany(indexName: "bySeller", fields: ["id"])
+  orders: [Order] @hasMany(indexName: "bySeller", fields: ["id"])
+  orderItems: [OrderItem] @hasMany(indexName: "bySeller", fields: ["id"])
+  returns: [Return] @hasMany(indexName: "bySeller", fields: ["id"])
+  sellerProfile: SellerProfile @hasOne(fields: ["id"])
+  payouts: [Payout] @hasMany(indexName: "bySeller", fields: ["id"])
+
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
 }
+
+# ========================================
+# 5. PRODUCT MODEL (ENHANCED)
+# ========================================
 
 type Product @model @auth(rules: [
   { allow: public, operations: [read] },
@@ -38,20 +217,612 @@ type Product @model @auth(rules: [
 ]) {
   id: ID!
   title: String!
+  slug: String! @index(name: "byProductSlug", queryField: "productBySlug")
   description: String
+  shortDescription: String
   price: Float!
+  compareAtPrice: Float
+  cost: Float
+  sku: String
+  barcode: String
   stock: Int!
+  lowStockThreshold: Int
+
+  # Media
   imageUrls: [AWSURL]
-  categoryId: ID! @index(name: "byCategory", sortKeyFields: ["title"]) 
-  sellerId: ID! @index(name: "bySeller", sortKeyFields: ["title"])
-  # Simple search by title - for basic search functionality
+  videoUrl: AWSURL
+
+  # Organization
+  categoryId: ID! @index(name: "byCategory", sortKeyFields: ["createdAt"])
+  category: Category @belongsTo(fields: ["categoryId"])
+  sellerId: ID! @index(name: "bySeller", sortKeyFields: ["createdAt"])
+  seller: Seller @belongsTo(fields: ["sellerId"])
+
+  # Product attributes
+  brand: String
+  weight: Float
+  dimensions: String
+  tags: [String]
+
+  # SEO
+  metaTitle: String
+  metaDescription: String
   searchTitle: String @index(name: "bySearchTitle", sortKeyFields: ["title"], queryField: "searchProducts")
+
+  # Status
+  isActive: Boolean!
+  isFeatured: Boolean
+  isOnSale: Boolean
+
+  # Stats
+  viewCount: Int
+  soldCount: Int
+  rating: Float
+  reviewCount: Int
+
+  # Relationships
+  cartItems: [CartItem] @hasMany(indexName: "byProduct", fields: ["id"])
+  wishlistItems: [WishlistItem] @hasMany(indexName: "byProduct", fields: ["id"])
+  orderItems: [OrderItem] @hasMany(indexName: "byProduct", fields: ["id"])
+  reviews: [Review] @hasMany(indexName: "byProduct", fields: ["id"])
+  returnItems: [ReturnItem] @hasMany(indexName: "byProduct", fields: ["id"])
+
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
 }
 
-# Auth Rules Applied:
-# - Categories: Public read, Admin write
-# - Sellers: Public read, Seller/Admin create, Owner/Admin update/delete  
-# - Products: Public read, Seller/Admin create, Owner/Admin update/delete
-# - Owner field is automatically added by Amplify for owner-based auth
+# ========================================
+# 6. CART MODEL
+# ========================================
+
+type Cart @model @auth(rules: [
+  { allow: owner, operations: [create, read, update, delete] },
+  { allow: groups, groups: ["admin"], operations: [read, update, delete] }
+]) {
+  id: ID!
+  userId: ID!
+  user: User @belongsTo(fields: ["userId"])
+
+  # Relationships
+  items: [CartItem] @hasMany(indexName: "byCart", fields: ["id"])
+
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+# ========================================
+# 7. CARTITEM MODEL
+# ========================================
+
+type CartItem @model @auth(rules: [
+  { allow: owner, operations: [create, read, update, delete] },
+  { allow: groups, groups: ["admin"], operations: [read, delete] }
+]) {
+  id: ID!
+  cartId: ID! @index(name: "byCart", sortKeyFields: ["createdAt"])
+  cart: Cart @belongsTo(fields: ["cartId"])
+  productId: ID! @index(name: "byProduct", sortKeyFields: ["createdAt"])
+  product: Product @belongsTo(fields: ["productId"])
+
+  quantity: Int!
+  priceAtAdd: Float!
+
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+# ========================================
+# 8. WISHLISTITEM MODEL
+# ========================================
+
+type WishlistItem @model @auth(rules: [
+  { allow: owner, operations: [create, read, update, delete] },
+  { allow: groups, groups: ["admin"], operations: [read, delete] }
+]) {
+  id: ID!
+  userId: ID! @index(name: "byUser", sortKeyFields: ["createdAt"])
+  user: User @belongsTo(fields: ["userId"])
+  productId: ID! @index(name: "byProduct", sortKeyFields: ["createdAt"])
+  product: Product @belongsTo(fields: ["productId"])
+
+  notes: String
+
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+# ========================================
+# 9. ORDER MODEL
+# ========================================
+
+type Order @model @auth(rules: [
+  { allow: owner, operations: [read] },
+  { allow: groups, groups: ["seller", "admin"], operations: [read, update] },
+  { allow: groups, groups: ["buyer"], operations: [create, read] }
+]) {
+  id: ID!
+  orderNumber: String! @index(name: "byOrderNumber", queryField: "orderByNumber")
+
+  userId: ID! @index(name: "byUser", sortKeyFields: ["createdAt"])
+  user: User @belongsTo(fields: ["userId"])
+
+  sellerId: ID! @index(name: "bySeller", sortKeyFields: ["createdAt"])
+  seller: Seller @belongsTo(fields: ["sellerId"])
+
+  # Status
+  status: OrderStatus!
+  paymentStatus: PaymentStatus!
+
+  # Amounts
+  subtotal: Float!
+  tax: Float!
+  shippingCost: Float!
+  discount: Float
+  total: Float!
+
+  # Address
+  shippingAddressId: ID @index(name: "byShippingAddress", sortKeyFields: ["createdAt"])
+  shippingAddress: Address @belongsTo(fields: ["shippingAddressId"])
+  shippingAddressSnapshot: String
+
+  # Tracking
+  trackingNumber: String
+  estimatedDeliveryDate: AWSDateTime
+  deliveredAt: AWSDateTime
+
+  # Payment
+  paymentMethodId: ID
+  transactionId: String
+
+  # Promo
+  promoCodeId: ID
+
+  # Notes
+  customerNotes: String
+  internalNotes: String
+
+  # Relationships
+  items: [OrderItem] @hasMany(indexName: "byOrder", fields: ["id"])
+  statusHistory: [OrderStatusHistory] @hasMany(indexName: "byOrder", fields: ["id"])
+  returns: [Return] @hasMany(indexName: "byOrder", fields: ["id"])
+  reviews: [Review] @hasMany(indexName: "byOrder", fields: ["id"])
+
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+# ========================================
+# 10. ORDERITEM MODEL
+# ========================================
+
+type OrderItem @model @auth(rules: [
+  { allow: owner, operations: [read] },
+  { allow: groups, groups: ["seller", "admin"], operations: [read, update] }
+]) {
+  id: ID!
+  orderId: ID! @index(name: "byOrder", sortKeyFields: ["createdAt"])
+  order: Order @belongsTo(fields: ["orderId"])
+
+  productId: ID! @index(name: "byProduct", sortKeyFields: ["createdAt"])
+  product: Product @belongsTo(fields: ["productId"])
+
+  sellerId: ID! @index(name: "bySeller", sortKeyFields: ["createdAt"])
+  seller: Seller @belongsTo(fields: ["sellerId"])
+
+  # Item details
+  productSnapshot: String
+  quantity: Int!
+  pricePerUnit: Float!
+  subtotal: Float!
+  tax: Float!
+  total: Float!
+
+  # Relationships
+  returnItems: [ReturnItem] @hasMany(indexName: "byOrderItem", fields: ["id"])
+
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+# ========================================
+# 11. ORDERSTATUSHISTORY MODEL
+# ========================================
+
+type OrderStatusHistory @model @auth(rules: [
+  { allow: owner, operations: [read] },
+  { allow: groups, groups: ["seller", "admin"], operations: [create, read] }
+]) {
+  id: ID!
+  orderId: ID! @index(name: "byOrder", sortKeyFields: ["createdAt"])
+  order: Order @belongsTo(fields: ["orderId"])
+
+  status: OrderStatus!
+  notes: String
+  createdBy: String
+
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+# ========================================
+# 12. PAYMENTMETHOD MODEL
+# ========================================
+
+type PaymentMethod @model @auth(rules: [
+  { allow: owner, operations: [create, read, update, delete] },
+  { allow: groups, groups: ["admin"], operations: [read, delete] }
+]) {
+  id: ID!
+  userId: ID! @index(name: "byUser", sortKeyFields: ["createdAt"])
+  user: User @belongsTo(fields: ["userId"])
+
+  type: PaymentMethodType!
+  isDefault: Boolean
+
+  # Card details (encrypted/tokenized in real app)
+  cardLast4: String
+  cardBrand: String
+  cardExpMonth: Int
+  cardExpYear: Int
+
+  # Billing address
+  billingAddressId: ID @index(name: "byBillingAddress", sortKeyFields: ["createdAt"])
+  billingAddress: Address @belongsTo(fields: ["billingAddressId"])
+
+  # Payment processor
+  stripePaymentMethodId: String
+
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+# ========================================
+# 13. REVIEW MODEL
+# ========================================
+
+type Review @model @auth(rules: [
+  { allow: public, operations: [read] },
+  { allow: owner, operations: [create, read, update, delete] },
+  { allow: groups, groups: ["admin"], operations: [read, update, delete] }
+]) {
+  id: ID!
+  productId: ID! @index(name: "byProduct", sortKeyFields: ["createdAt"])
+  product: Product @belongsTo(fields: ["productId"])
+
+  userId: ID! @index(name: "byUser", sortKeyFields: ["createdAt"])
+  user: User @belongsTo(fields: ["userId"])
+
+  orderId: ID @index(name: "byOrder", sortKeyFields: ["createdAt"])
+  order: Order @belongsTo(fields: ["orderId"])
+
+  rating: Int!
+  title: String
+  comment: String
+  imageUrls: [AWSURL]
+
+  # Moderation
+  isVerifiedPurchase: Boolean
+  isApproved: Boolean
+
+  # Seller response
+  sellerResponse: String
+  sellerResponseAt: AWSDateTime
+
+  # Helpfulness
+  helpfulCount: Int
+
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+# ========================================
+# 14. RETURN MODEL
+# ========================================
+
+type Return @model @auth(rules: [
+  { allow: owner, operations: [create, read] },
+  { allow: groups, groups: ["seller", "admin"], operations: [read, update] }
+]) {
+  id: ID!
+  returnNumber: String! @index(name: "byReturnNumber", queryField: "returnByNumber")
+
+  orderId: ID! @index(name: "byOrder", sortKeyFields: ["createdAt"])
+  order: Order @belongsTo(fields: ["orderId"])
+
+  userId: ID! @index(name: "byUser", sortKeyFields: ["createdAt"])
+  user: User @belongsTo(fields: ["userId"])
+
+  sellerId: ID! @index(name: "bySeller", sortKeyFields: ["createdAt"])
+  seller: Seller @belongsTo(fields: ["sellerId"])
+
+  # Return details
+  status: ReturnStatus!
+  reason: ReturnReason!
+  description: String
+  imageUrls: [AWSURL]
+
+  # Amounts
+  refundAmount: Float!
+  restockingFee: Float
+
+  # Processing
+  approvedAt: AWSDateTime
+  approvedBy: String
+  rejectedAt: AWSDateTime
+  rejectedReason: String
+  completedAt: AWSDateTime
+
+  # Shipping
+  returnTrackingNumber: String
+  returnShippingCost: Float
+
+  # Relationships
+  items: [ReturnItem] @hasMany(indexName: "byReturn", fields: ["id"])
+
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+# ========================================
+# 15. RETURNITEM MODEL
+# ========================================
+
+type ReturnItem @model @auth(rules: [
+  { allow: owner, operations: [read] },
+  { allow: groups, groups: ["seller", "admin"], operations: [read, update] }
+]) {
+  id: ID!
+  returnId: ID! @index(name: "byReturn", sortKeyFields: ["createdAt"])
+  return: Return @belongsTo(fields: ["returnId"])
+
+  orderItemId: ID! @index(name: "byOrderItem", sortKeyFields: ["createdAt"])
+  orderItem: OrderItem @belongsTo(fields: ["orderItemId"])
+
+  productId: ID! @index(name: "byProduct", sortKeyFields: ["createdAt"])
+  product: Product @belongsTo(fields: ["productId"])
+
+  quantity: Int!
+  refundAmount: Float!
+
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+# ========================================
+# 16. PROMOCODE MODEL
+# ========================================
+
+type PromoCode @model @auth(rules: [
+  { allow: public, operations: [read] },
+  { allow: groups, groups: ["admin"], operations: [create, read, update, delete] }
+]) {
+  id: ID!
+  code: String! @index(name: "byCode", queryField: "promoCodeByCode")
+  description: String
+
+  # Discount
+  discountType: DiscountType!
+  discountValue: Float!
+
+  # Constraints
+  minPurchaseAmount: Float
+  maxDiscountAmount: Float
+  usageLimit: Int
+  usageLimitPerUser: Int
+
+  # Validity
+  validFrom: AWSDateTime!
+  validUntil: AWSDateTime!
+  isActive: Boolean!
+
+  # Restrictions
+  applicableToCategories: [ID]
+  applicableToProducts: [ID]
+  isPlusMembersOnly: Boolean
+  isFirstOrderOnly: Boolean
+
+  # Stats
+  timesUsed: Int
+
+  # Relationships
+  usages: [PromoCodeUsage] @hasMany(indexName: "byPromoCode", fields: ["id"])
+
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+# ========================================
+# 17. PROMOCODEUSAGE MODEL
+# ========================================
+
+type PromoCodeUsage @model @auth(rules: [
+  { allow: owner, operations: [read] },
+  { allow: groups, groups: ["admin"], operations: [create, read] }
+]) {
+  id: ID!
+  promoCodeId: ID! @index(name: "byPromoCode", sortKeyFields: ["createdAt"])
+  promoCode: PromoCode @belongsTo(fields: ["promoCodeId"])
+
+  userId: ID! @index(name: "byUser", sortKeyFields: ["createdAt"])
+  user: User @belongsTo(fields: ["userId"])
+
+  orderId: ID
+  discountApplied: Float!
+
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+# ========================================
+# 18. SELLERPROFILE MODEL
+# ========================================
+
+type SellerProfile @model @auth(rules: [
+  { allow: groups, groups: ["seller"], operations: [read, update] },
+  { allow: groups, groups: ["admin"], operations: [create, read, update, delete] }
+]) {
+  id: ID!
+  sellerId: ID!
+  seller: Seller @belongsTo(fields: ["sellerId"])
+
+  # Financial
+  bankAccountNumber: String
+  bankName: String
+  bankRoutingNumber: String
+  taxIdNumber: String
+
+  # Statistics
+  totalSales: Float
+  totalOrders: Int
+  averageOrderValue: Float
+  returnRate: Float
+
+  # Performance
+  responseTime: Int
+  fulfillmentRate: Float
+  onTimeShippingRate: Float
+
+  # Settings
+  autoApproveReturns: Boolean
+  autoRefundReturns: Boolean
+  notificationPreferences: String
+
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+# ========================================
+# 19. PAYOUT MODEL
+# ========================================
+
+type Payout @model @auth(rules: [
+  { allow: groups, groups: ["seller"], operations: [read] },
+  { allow: groups, groups: ["admin"], operations: [create, read, update, delete] }
+]) {
+  id: ID!
+  sellerId: ID! @index(name: "bySeller", sortKeyFields: ["createdAt"])
+  seller: Seller @belongsTo(fields: ["sellerId"])
+
+  amount: Float!
+  currency: String!
+  status: String!
+
+  # Period
+  periodStart: AWSDateTime!
+  periodEnd: AWSDateTime!
+
+  # Payment details
+  paymentMethod: String
+  transactionId: String
+  paidAt: AWSDateTime
+
+  # Breakdown
+  orderCount: Int
+  totalSales: Float
+  platformFee: Float
+  refunds: Float
+  adjustments: Float
+
+  notes: String
+
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+# ========================================
+# 20. NOTIFICATION MODEL
+# ========================================
+
+type Notification @model @auth(rules: [
+  { allow: owner, operations: [read, update, delete] },
+  { allow: groups, groups: ["admin"], operations: [create, read, update, delete] }
+]) {
+  id: ID!
+  userId: ID! @index(name: "byUser", sortKeyFields: ["createdAt"])
+  user: User @belongsTo(fields: ["userId"])
+
+  type: NotificationType!
+  title: String!
+  message: String!
+
+  # Links
+  actionUrl: String
+  imageUrl: AWSURL
+
+  # Status
+  isRead: Boolean!
+  readAt: AWSDateTime
+
+  # Metadata
+  metadata: String
+
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+# ========================================
+# 21. PLUSSUBSCRIPTION MODEL
+# ========================================
+
+type PlusSubscription @model @auth(rules: [
+  { allow: owner, operations: [read] },
+  { allow: groups, groups: ["admin"], operations: [create, read, update, delete] }
+]) {
+  id: ID!
+  userId: ID!
+  user: User @belongsTo(fields: ["userId"])
+
+  # Subscription details
+  status: String!
+  startDate: AWSDateTime!
+  endDate: AWSDateTime!
+
+  # Payment
+  price: Float!
+  billingCycle: String!
+  nextBillingDate: AWSDateTime
+
+  # Stripe integration
+  stripeSubscriptionId: String
+  stripeCustomerId: String
+
+  # Cancellation
+  cancelAtPeriodEnd: Boolean
+  canceledAt: AWSDateTime
+  cancellationReason: String
+
+  # Benefits tracking
+  freeShippingUsed: Int
+  earlyAccessUsed: Int
+  exclusiveDealsUsed: Int
+
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+# ========================================
+# 22. ADMINLOG MODEL
+# ========================================
+
+type AdminLog @model @auth(rules: [
+  { allow: groups, groups: ["admin"], operations: [create, read] }
+]) {
+  id: ID!
+  adminId: String!
+  adminEmail: AWSEmail!
+
+  actionType: AdminActionType!
+  description: String!
+
+  # Target
+  targetType: String
+  targetId: String
+
+  # Details
+  metadata: String
+  ipAddress: String
+  userAgent: String
+
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}

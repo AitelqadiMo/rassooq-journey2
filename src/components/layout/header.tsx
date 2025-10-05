@@ -9,8 +9,9 @@ import { useAuth } from "@/contexts/AuthContext";
 import { MobileMenu } from "@/components/layout/mobile-menu";
 import { ShellContext } from "@/components/layout/app-shell";
 import { RoleSwitcher } from "@/components/ui/role-switcher";
+import { CartDrawer } from "@/components/cart/CartDrawer";
 import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 export const Header = () => {
@@ -19,9 +20,18 @@ export const Header = () => {
   const location = useLocation();
   const { state, dispatch } = useAppContext();
   const { user, isAuthenticated, role, signOutUser } = useAuth();
-  // Mini cart moved to AppShell for a single global cart entry point
   const [query, setQuery] = React.useState("");
   const [searchFocused, setSearchFocused] = React.useState(false);
+  const [isScrolled, setIsScrolled] = React.useState(false);
+
+  // Scroll behavior
+  React.useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
   
   // Suggestions temporarily disabled - will implement with real data
   const suggestions = React.useMemo(() => {
@@ -41,17 +51,33 @@ export const Header = () => {
   const isAuthRoute = location.pathname.startsWith('/login') || location.pathname.startsWith('/register');
 
   return (
-    <motion.header 
+    <motion.header
       initial={{ y: -100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
+      animate={{
+        y: 0,
+        opacity: 1,
+      }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className="fixed top-0 z-50 w-full"
+      className="fixed top-0 z-50 w-screen"
     >
-      {/* Ultra-thin glass backdrop */}
-      <div className="absolute inset-0 bg-background/80 backdrop-blur-xl border-b border-border/10" />
-      
-      <div className="relative container mx-auto px-3 sm:px-4 md:px-6">
-        <div className="flex items-center justify-between py-3 sm:py-4 md:py-6 gap-4 sm:gap-6">
+      {/* Dynamic glass backdrop - more opaque when scrolled */}
+      <motion.div
+        className="absolute inset-0 backdrop-blur-xl border-b border-border/10"
+        animate={{
+          backgroundColor: isScrolled ? 'rgba(var(--background), 0.95)' : 'rgba(var(--background), 0.8)',
+        }}
+        transition={{ duration: 0.3 }}
+      />
+
+      <div className="relative w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16">
+        <motion.div
+          className="flex items-center justify-between gap-3 sm:gap-4 md:gap-6"
+          animate={{
+            paddingTop: isScrolled ? '0.75rem' : '1rem',
+            paddingBottom: isScrolled ? '0.75rem' : '1rem',
+          }}
+          transition={{ duration: 0.3 }}
+        >
           {/* Mobile menu button */}
           <div className="md:hidden">
             <MobileMenu />
@@ -168,12 +194,15 @@ export const Header = () => {
                 </Button>
               </motion.div>
 
+              {/* Cart Drawer */}
+              <CartDrawer />
+
               {/* Notifications */}
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="glass-card h-12 w-12 hover:shadow-medium hover:bg-primary/10 transition-all duration-200 rounded-2xl relative" 
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="hidden sm:flex glass-card h-12 w-12 hover:shadow-medium hover:bg-primary/10 transition-all duration-200 rounded-2xl relative"
                 >
                   <Bell className="h-5 w-5" />
                   <div className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full animate-pulse" />
@@ -224,7 +253,7 @@ export const Header = () => {
               </motion.div>
             </div>
           </div>
-        </div>
+        </motion.div>
         
         {/* Mobile Search Bar - Enhanced */}
         <AnimatePresence>

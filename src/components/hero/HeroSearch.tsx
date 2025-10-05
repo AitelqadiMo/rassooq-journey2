@@ -123,3 +123,4 @@ export function HeroSearch({ onSearch, fetchSuggestions, trending = [] }: HeroSe
 }
 
 
+
