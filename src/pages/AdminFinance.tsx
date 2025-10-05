@@ -99,7 +99,7 @@ const AdminFinance = () => {
                 <Area dataKey="commission" stroke="var(--color-commission)" fill="var(--color-commission)" fillOpacity={0.2} />
                 <Area dataKey="codOutstanding" stroke="var(--color-codOutstanding)" fill="var(--color-codOutstanding)" fillOpacity={0.2} />
                 <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-                <ChartLegend content={<ChartLegendContent />} />
+                <ChartLegend content={<ChartLegendContent payload={[]} />} />
               </AreaChart>
             </ChartContainer>
           </CardContent>

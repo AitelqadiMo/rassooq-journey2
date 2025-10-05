@@ -147,7 +147,7 @@ const AdminOverview = () => {
                 <Bar dataKey="orders" fill="var(--color-orders)" radius={[4, 4, 0, 0]} />
                 <Bar dataKey="gmv" fill="var(--color-gmv)" radius={[4, 4, 0, 0]} />
                 <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-                <ChartLegend content={<ChartLegendContent />} />
+                <ChartLegend content={<ChartLegendContent payload={[]} />} />
               </BarChart>
             </ChartContainer>
           </CardContent>

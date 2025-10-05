@@ -211,11 +211,6 @@ const SearchResults = () => {
                           <span className="font-bold text-primary">
                             AED {product.price}
                           </span>
-                          {product.originalPrice && (
-                            <span className="text-xs text-muted-foreground line-through">
-                              AED {product.originalPrice}
-                            </span>
-                          )}
                         </div>
                       </div>
                       <div className="flex flex-col items-end gap-2">

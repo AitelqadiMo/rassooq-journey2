@@ -143,7 +143,16 @@ const CategoryResults = () => {
           {viewMode === "grid" ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
               {filteredProducts.map((product) => (
-                <ProductCard key={product.id} {...product} />
+                <ProductCard 
+                  key={product.id} 
+                  id={product.id}
+                  title={product.title}
+                  brand={product.brand || ""}
+                  price={product.price}
+                  image={product.image}
+                  rating={4.5} 
+                  reviewCount={0} 
+                />
               ))}
             </div>
           ) : (
@@ -168,11 +177,6 @@ const CategoryResults = () => {
                       <span className="font-bold text-primary">
                         AED {product.price}
                       </span>
-                      {product.originalPrice && (
-                        <span className="text-xs text-muted-foreground line-through">
-                          AED {product.originalPrice}
-                        </span>
-                      )}
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-2">

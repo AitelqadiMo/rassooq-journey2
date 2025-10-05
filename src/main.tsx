@@ -2,14 +2,22 @@ import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 import { Amplify } from 'aws-amplify'
-import awsconfig from './aws-exports.js'
 
-try {
-  Amplify.configure(awsconfig)
-  console.log('Amplify configured successfully')
-} catch (error) {
-  console.error('Error configuring Amplify:', error)
+// Dynamically import AWS config if it exists
+const configureAmplify = async () => {
+  try {
+    // @ts-ignore - dynamic import may not exist
+    const awsconfig = await import('./aws-exports.js').catch(() => null)
+    if (awsconfig) {
+      Amplify.configure(awsconfig.default || awsconfig)
+      console.log('Amplify configured successfully')
+    }
+  } catch (error) {
+    console.warn('AWS Amplify configuration not found, continuing without backend')
+  }
 }
+
+configureAmplify().catch(console.warn)
 
 try {
   createRoot(document.getElementById("root")!).render(<App />);
