@@ -37,16 +37,41 @@ export const CartDrawer = () => {
           <Button
             variant="ghost"
             size="sm"
-            className="relative glass-card h-10 w-10 sm:h-12 sm:w-12 hover:shadow-medium hover:bg-primary/10 transition-all duration-200 rounded-2xl"
+            className="relative h-10 w-10 sm:h-12 sm:w-12 rounded-2xl glass-card hover:shadow-medium hover:bg-primary/10 transition-all duration-200 p-0"
           >
-            <ShoppingCart className="h-5 w-5" />
-            {itemCount > 0 && (
-              <Badge
-                className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center p-0 bg-orange-500 hover:bg-orange-600 text-white rounded-full text-xs font-bold animate-pulse"
-              >
-                {itemCount}
-              </Badge>
-            )}
+            <ShoppingCart className="h-5 w-5 text-white" />
+            <AnimatePresence mode="wait">
+              {itemCount > 0 && (
+                <motion.div
+                  key={itemCount}
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{
+                    scale: 1,
+                    opacity: 1,
+                  }}
+                  exit={{ scale: 0, opacity: 0 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 500,
+                    damping: 25
+                  }}
+                  className="absolute -top-1 -right-1"
+                >
+                  <Badge
+                    className="h-5 w-5 flex items-center justify-center p-0 bg-gradient-to-r from-orange-500 to-yellow-500 text-white rounded-full text-xs font-bold shadow-lg"
+                  >
+                    <motion.span
+                      key={`count-${itemCount}`}
+                      initial={{ y: -10, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    >
+                      {itemCount}
+                    </motion.span>
+                  </Badge>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </Button>
         </motion.div>
       </SheetTrigger>
