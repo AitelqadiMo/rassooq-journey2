@@ -32,148 +32,148 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] overflow-x-hidden">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       <Header />
 
-      {/* Editorial Hero Section - Split Screen Layout */}
+      {/* Hoojan-Inspired Hero Section - Elegant Split Screen */}
       <section
         ref={heroRef}
-        className="relative h-screen w-full flex items-center overflow-hidden bg-white"
+        className="relative h-screen w-full flex items-center overflow-hidden bg-gradient-hero"
       >
-        {/* Hero Image - 60% */}
+        {/* Hero Image - 60% with subtle parallax */}
         <div 
           className="absolute inset-y-0 left-0 w-full md:w-3/5 overflow-hidden"
           style={{
-            transform: `translateY(${scrollY * 0.2}px)`,
+            transform: `translateY(${scrollY * 0.15}px)`,
           }}
         >
-          <div className="relative w-full h-full">
+          <div className="relative w-full h-full hover-zoom">
             <img 
               src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&q=80&w=2000"
-              alt="Luxury product showcase"
-              className="w-full h-full object-cover"
+              alt="Curated luxury products"
+              className="w-full h-full object-cover transition-elegant"
             />
-            <div className="absolute inset-0 bg-black/20" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-transparent to-white/30" />
           </div>
         </div>
 
-        {/* Hero Content - 40% */}
-        <div className="relative z-10 w-full md:w-2/5 ml-auto h-full flex items-center bg-white md:bg-transparent">
-          <div className="w-full px-8 md:px-12 lg:px-16 xl:px-20 py-12 md:py-0 md:bg-white md:h-full md:flex md:flex-col md:justify-center">
+        {/* Hero Content - 40% Elegant Typography */}
+        <div className="relative z-10 w-full md:w-2/5 ml-auto h-full flex items-center bg-gradient-hero md:bg-card">
+          <div className="w-full px-8 md:px-12 lg:px-16 xl:px-24 py-16 md:py-0 md:h-full md:flex md:flex-col md:justify-center">
             <motion.div
-              initial={{ opacity: 0, y: 40 }}
+              initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.2, delay: 0.3 }}
+              transition={{ duration: 1.4, delay: 0.4, ease: [0.19, 1, 0.22, 1] }}
             >
-              <p className="text-xs uppercase tracking-[0.3em] text-gray-500 mb-8">
-                Premium Marketplace
+              <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-10 font-medium">
+                Curated Premium Marketplace
               </p>
               
-              <h1 className="font-display text-[80px] sm:text-[100px] md:text-[120px] lg:text-[140px] font-light leading-[0.9] mb-8 text-black">
+              <h1 className="font-logo text-[90px] sm:text-[110px] md:text-[130px] lg:text-[150px] font-light leading-[0.85] mb-10 text-secondary tracking-[0.02em]">
                 RASSOOQ
               </h1>
               
-              <p className="text-xl md:text-2xl font-light text-gray-700 mb-12 leading-relaxed max-w-md">
-                Where sophistication meets innovation in curated commerce
+              <p className="text-lg md:text-xl font-light text-muted-foreground mb-14 leading-relaxed max-w-lg">
+                Where timeless elegance meets thoughtful curation in every piece
               </p>
               
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-5">
                 <Button
                   onClick={() => navigate('/categories')}
                   variant="ghost"
-                  className="group border-b-2 border-black rounded-none px-0 py-6 text-base font-light hover:bg-transparent justify-start"
+                  size="lg"
+                  className="group relative border-b-[1.5px] border-secondary rounded-none px-0 py-7 text-sm font-normal hover:bg-transparent justify-start tracking-wide text-secondary"
                 >
                   Explore Collection
-                  <ArrowRight className="ml-3 h-5 w-5 group-hover:translate-x-2 transition-transform duration-300" />
+                  <ArrowRight className="ml-4 h-4 w-4 group-hover:translate-x-1 transition-elegant" />
                 </Button>
                 <Button
                   onClick={() => navigate('/plus')}
                   variant="ghost"
-                  className="border-b border-gray-300 rounded-none px-0 py-6 text-base font-light hover:bg-transparent justify-start"
+                  size="lg"
+                  className="border-b border-border rounded-none px-0 py-7 text-sm font-light hover:bg-transparent justify-start tracking-wide text-muted-foreground hover:text-secondary"
                 >
-                  Join Rassooq+
+                  Discover Rassooq+
                 </Button>
               </div>
             </motion.div>
 
-            {/* Scroll Indicator */}
+            {/* Elegant Scroll Indicator */}
             <motion.div 
-              className="hidden md:flex absolute bottom-12 left-12 lg:left-16 xl:left-20 items-center gap-3"
+              className="hidden md:flex absolute bottom-16 left-12 lg:left-16 xl:left-24 items-center gap-4"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 1.5 }}
+              transition={{ duration: 1.2, delay: 1.8 }}
             >
-              <div className="w-px h-16 bg-black/20" />
-              <p className="text-xs uppercase tracking-[0.2em] text-gray-500 -rotate-90 origin-left translate-y-12">
+              <div className="w-[1px] h-20 bg-border" />
+              <p className="text-[9px] uppercase tracking-[0.25em] text-muted-foreground -rotate-90 origin-left translate-y-14 font-medium">
                 Scroll
               </p>
               <motion.div
-                animate={{ y: [0, 10, 0] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                animate={{ y: [0, 8, 0] }}
+                transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
               >
-                <ChevronDown className="h-4 w-4 text-gray-400" />
+                <ChevronDown className="h-4 w-4 text-muted-foreground/60" />
               </motion.div>
             </motion.div>
           </div>
         </div>
       </section>
 
-      <main className="relative z-10 bg-[#FAFAFA] w-full">
-        {/* Category Highlights - Editorial Grid */}
+      <main className="relative z-10 bg-background w-full">
+        {/* Category Highlights - Minimal Masonry Grid */}
         <motion.section
-          className="py-32 w-full bg-white"
+          className="py-28 w-full bg-card"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          transition={{ duration: 1.2 }}
+          transition={{ duration: 1.4 }}
           viewport={{ once: true }}
         >
-          <div className="max-w-[1440px] mx-auto px-8 md:px-12 lg:px-16">
+          <div className="max-w-[1440px] mx-auto px-8 md:px-12 lg:px-20">
             <motion.div 
               className="mb-24"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.2 }}
+              transition={{ duration: 1.4, ease: [0.19, 1, 0.22, 1] }}
             >
-              <div className="border-b border-black/10 pb-6 mb-2">
-                <p className="text-xs uppercase tracking-[0.2em] text-gray-500 mb-6">
-                  Discover
+              <div className="border-b border-border pb-8 mb-3">
+                <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-8 font-medium">
+                  Discover Collections
                 </p>
-                <h2 className="font-display text-6xl md:text-7xl lg:text-8xl font-light text-black">
+                <h2 className="font-display text-5xl md:text-6xl lg:text-7xl font-light text-secondary leading-tight">
                   Shop by Style
                 </h2>
               </div>
             </motion.div>
 
             {/* Categories temporarily disabled - will add back with real data */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[].map((category, index) => (
                 <motion.div
                   key={category.id}
-                  className="group cursor-pointer"
-                  initial={{ opacity: 0, y: 40 }}
+                  className="group cursor-pointer hover-lift"
+                  initial={{ opacity: 0, y: 50 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ 
-                    duration: 1.2,
-                    delay: index * 0.15,
+                    duration: 1.4,
+                    delay: index * 0.12,
+                    ease: [0.19, 1, 0.22, 1]
                   }}
                   viewport={{ once: true }}
-                  whileHover={{ y: -4 }}
                   onClick={() => navigate(`/c/${category.id}`)}
                 >
-                  <div className="relative overflow-hidden bg-white">
-                    <div className="relative h-[400px] overflow-hidden">
-                      <motion.img 
+                  <div className="relative overflow-hidden bg-card shadow-soft rounded-lg">
+                    <div className="relative h-[420px] overflow-hidden hover-zoom">
+                      <img 
                         src={category.image} 
                         alt={category.title}
-                        className="w-full h-full object-cover"
-                        whileHover={{ scale: 1.05 }}
-                        transition={{ duration: 0.8 }}
+                        className="w-full h-full object-cover transition-elegant"
                       />
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-500" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-secondary/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-elegant" />
                     </div>
-                    <div className="absolute bottom-0 left-0 right-0 p-8 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-                      <h3 className="font-display text-3xl text-white mb-2">{category.title}</h3>
-                      <p className="text-sm text-white/80">{category.itemCount} items</p>
+                    <div className="absolute bottom-0 left-0 right-0 p-8 translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-gentle">
+                      <h3 className="font-display text-2xl text-card mb-1 font-light tracking-wide">{category.title}</h3>
+                      <p className="text-xs text-card/80 uppercase tracking-wider">{category.itemCount} pieces</p>
                     </div>
                   </div>
                 </motion.div>
@@ -182,21 +182,21 @@ const Index = () => {
           </div>
         </motion.section>
 
-        {/* Trending Products */}
+        {/* Trending Products - Elegant Showcase */}
         <motion.section
-          className="py-32 w-full bg-[#FAFAFA]"
-          initial={{ opacity: 0, y: 30 }}
+          className="py-28 w-full bg-background"
+          initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2 }}
+          transition={{ duration: 1.4, ease: [0.19, 1, 0.22, 1] }}
           viewport={{ once: true }}
         >
-          <div className="max-w-[1440px] mx-auto px-8 md:px-12 lg:px-16">
-            <div className="mb-20">
-              <div className="border-b border-black/10 pb-6 mb-2">
-                <p className="text-xs uppercase tracking-[0.2em] text-gray-500 mb-6">
+          <div className="max-w-[1440px] mx-auto px-8 md:px-12 lg:px-20">
+            <div className="mb-24">
+              <div className="border-b border-border pb-8 mb-3">
+                <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-8 font-medium">
                   Curated Selection
                 </p>
-                <h2 className="font-display text-6xl md:text-7xl lg:text-8xl font-light text-black">
+                <h2 className="font-display text-5xl md:text-6xl lg:text-7xl font-light text-secondary leading-tight">
                   Trending Now
                 </h2>
               </div>
@@ -208,21 +208,21 @@ const Index = () => {
           </div>
         </motion.section>
 
-        {/* Featured Brands */}
+        {/* Featured Brands - Refined Display */}
         <motion.section
-          className="py-32 w-full bg-white"
+          className="py-28 w-full bg-card"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          transition={{ duration: 1.2 }}
+          transition={{ duration: 1.4 }}
           viewport={{ once: true }}
         >
-          <div className="max-w-[1440px] mx-auto px-8 md:px-12 lg:px-16">
-            <div className="mb-20">
-              <div className="border-b border-black/10 pb-6 mb-2">
-                <p className="text-xs uppercase tracking-[0.2em] text-gray-500 mb-6">
+          <div className="max-w-[1440px] mx-auto px-8 md:px-12 lg:px-20">
+            <div className="mb-24">
+              <div className="border-b border-border pb-8 mb-3">
+                <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-8 font-medium">
                   Official Partners
                 </p>
-                <h2 className="font-display text-6xl md:text-7xl lg:text-8xl font-light text-black">
+                <h2 className="font-display text-5xl md:text-6xl lg:text-7xl font-light text-secondary leading-tight">
                   Premium Brands
                 </h2>
               </div>
@@ -231,21 +231,21 @@ const Index = () => {
           </div>
         </motion.section>
 
-        {/* New Arrivals */}
+        {/* New Arrivals - Fresh Collection */}
         <motion.section
-          className="py-32 w-full bg-[#FAFAFA]"
-          initial={{ opacity: 0, y: 30 }}
+          className="py-28 w-full bg-background"
+          initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2 }}
+          transition={{ duration: 1.4, ease: [0.19, 1, 0.22, 1] }}
           viewport={{ once: true }}
         >
-          <div className="max-w-[1440px] mx-auto px-8 md:px-12 lg:px-16">
-            <div className="mb-20">
-              <div className="border-b border-black/10 pb-6 mb-2">
-                <p className="text-xs uppercase tracking-[0.2em] text-gray-500 mb-6">
+          <div className="max-w-[1440px] mx-auto px-8 md:px-12 lg:px-20">
+            <div className="mb-24">
+              <div className="border-b border-border pb-8 mb-3">
+                <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-8 font-medium">
                   Just Launched
                 </p>
-                <h2 className="font-display text-6xl md:text-7xl lg:text-8xl font-light text-black">
+                <h2 className="font-display text-5xl md:text-6xl lg:text-7xl font-light text-secondary leading-tight">
                   New Arrivals
                 </h2>
               </div>
@@ -257,33 +257,33 @@ const Index = () => {
           </div>
         </motion.section>
 
-        {/* Rassooq+ Premium Section */}
+        {/* Rassooq+ Premium Section - Sophisticated Membership */}
         <motion.section 
-          className="py-32 w-full bg-black"
+          className="py-32 w-full bg-secondary"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          transition={{ duration: 1.2 }}
+          transition={{ duration: 1.4 }}
           viewport={{ once: true }}
         >
           <SouqPlusPromo />
         </motion.section>
 
-        {/* Best Sellers */}
+        {/* Best Sellers - Customer Favorites */}
         {bestSellers.length > 0 && (
           <motion.section 
-            className="py-32 w-full bg-white"
-            initial={{ opacity: 0, y: 30 }}
+            className="py-28 w-full bg-card"
+            initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2 }}
+            transition={{ duration: 1.4, ease: [0.19, 1, 0.22, 1] }}
             viewport={{ once: true }}
           >
-            <div className="max-w-[1440px] mx-auto px-8 md:px-12 lg:px-16">
-              <div className="mb-20">
-                <div className="border-b border-black/10 pb-6 mb-2">
-                  <p className="text-xs uppercase tracking-[0.2em] text-gray-500 mb-6">
+            <div className="max-w-[1440px] mx-auto px-8 md:px-12 lg:px-20">
+              <div className="mb-24">
+                <div className="border-b border-border pb-8 mb-3">
+                  <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-8 font-medium">
                     Customer Favorites
                   </p>
-                  <h2 className="font-display text-6xl md:text-7xl lg:text-8xl font-light text-black">
+                  <h2 className="font-display text-5xl md:text-6xl lg:text-7xl font-light text-secondary leading-tight">
                     Best Sellers
                   </h2>
                 </div>
@@ -296,21 +296,21 @@ const Index = () => {
           </motion.section>
         )}
 
-        {/* Personalized Recommendations */}
+        {/* Personalized Recommendations - For You */}
         <motion.section 
-          className="py-32 w-full bg-[#FAFAFA]"
-          initial={{ opacity: 0, y: 30 }}
+          className="py-28 w-full bg-background"
+          initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2 }}
+          transition={{ duration: 1.4, ease: [0.19, 1, 0.22, 1] }}
           viewport={{ once: true }}
         >
-          <div className="max-w-[1440px] mx-auto px-8 md:px-12 lg:px-16">
-            <div className="mb-20">
-              <div className="border-b border-black/10 pb-6 mb-2">
-                <p className="text-xs uppercase tracking-[0.2em] text-gray-500 mb-6">
+          <div className="max-w-[1440px] mx-auto px-8 md:px-12 lg:px-20">
+            <div className="mb-24">
+              <div className="border-b border-border pb-8 mb-3">
+                <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-8 font-medium">
                   For You
                 </p>
-                <h2 className="font-display text-6xl md:text-7xl lg:text-8xl font-light text-black">
+                <h2 className="font-display text-5xl md:text-6xl lg:text-7xl font-light text-secondary leading-tight">
                   Recommended
                 </h2>
               </div>

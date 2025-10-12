@@ -4,9 +4,10 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Rassooq Design System - Premium Futuristic E-commerce Identity
-Terracotta, Majorelle Blue, Deep Olive Green with glassmorphism and premium feel.
-All colors MUST be HSL. 60/30/10 color usage with WCAG AA accessibility.
+/* Rassooq Design System - Hoojan-Inspired Luxury & Sophistication
+Calm, muted palette: Soft creams, warm greys, muted sage, gentle terracotta
+Premium, minimal aesthetic with generous whitespace and elegant typography
+All colors MUST be HSL. WCAG AA accessible.
 */
 
 @layer base {
@@ -17,86 +18,83 @@ All colors MUST be HSL. 60/30/10 color usage with WCAG AA accessibility.
     overflow-x: hidden;
   }
   :root {
-    /* Rassooq Brand Colors (Hoojan-inspired) */
-    /* Action / CTA */
-    --primary: 16 100% 61%; /* Vibrant Orange #FF6F3C */
+    /* Hoojan-Inspired Brand Colors - Calm & Sophisticated */
+    /* Primary CTA - Muted Sage Green */
+    --primary: 150 15% 55%; /* Soft Sage #7FA088 */
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 16 100% 70%;
+    --primary-glow: 150 18% 65%;
 
-    /* Trust / Headings */
-    --secondary: 225 64% 33%; /* Deep Blue #1E3A8A */
+    /* Secondary - Warm Charcoal for headings */
+    --secondary: 30 5% 25%; /* Deep Warm Grey #3D3A37 */
     --secondary-foreground: 0 0% 100%;
 
-    /* Terracotta accents */
-    --accent: 22 64% 58%; /* Terracotta #D98250 */
-    --accent-foreground: 0 0% 100%;
+    /* Accent - Gentle Terracotta */
+    --accent: 20 35% 65%; /* Soft Terracotta #C5A28E */
+    --accent-foreground: 30 10% 20%;
 
-    /* Olive green tags */
-    --tertiary: 85 43% 60%; /* Olive Green #A0C46D */
-    --tertiary-foreground: 0 0% 0%;
+    /* Tertiary - Warm Stone */
+    --tertiary: 35 12% 70%; /* Warm Stone #B8AFA8 */
+    --tertiary-foreground: 0 0% 15%;
 
-    /* Soft Yellow badges */
-    --flash: 42 100% 70%; /* Soft Yellow #FFD166 */
-    --flash-foreground: 0 0% 10%;
+    /* Flash/Highlight - Soft Cream */
+    --flash: 40 40% 90%; /* Soft Cream #F5F1E8 */
+    --flash-foreground: 30 10% 20%;
 
-    /* Neutral Palette */
-    --background: 0 0% 98%; /* Off-White #FAFAFA */
-    --foreground: 0 0% 20%; /* Charcoal Gray #333333 */
+    /* Neutral Palette - Calm & Minimal */
+    --background: 40 30% 97%; /* Warm Off-White #FAFAF8 */
+    --foreground: 30 8% 20%; /* Charcoal #2D2D2D */
     
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 20%;
+    --card-foreground: 30 8% 20%;
     
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 20%;
+    --popover-foreground: 30 8% 20%;
     
-    --muted: 37 61% 82%; /* Sand Beige #EED9B7 */
-    --muted-foreground: 0 0% 45%;
+    --muted: 40 20% 94%; /* Soft Beige #F5F1EB */
+    --muted-foreground: 30 5% 45%;
     
-    --destructive: 0 84% 60%;
+    --destructive: 0 65% 55%;
     --destructive-foreground: 0 0% 100%;
     
-    --border: 37 35% 80%;
+    --border: 40 15% 88%; /* Soft Grey Border #E8E6E1 */
     --input: 0 0% 100%;
-    --ring: 16 100% 61%;
+    --ring: 150 15% 55%;
     
-    /* Premium Gradients */
+    /* Elegant Gradients - Soft & Sophisticated */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
-    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
-    --gradient-flash: linear-gradient(90deg, hsl(var(--flash)), hsl(var(--accent)));
+    --gradient-hero: linear-gradient(135deg, hsl(40 40% 96%), hsl(40 30% 92%));
+    --gradient-overlay: linear-gradient(180deg, hsl(40 30% 97% / 0.8), hsl(40 30% 97% / 0.95));
     --gradient-subtle: linear-gradient(180deg, hsl(var(--background)), hsl(var(--muted)));
-    --gradient-glass: linear-gradient(135deg, hsl(var(--background) / 0.8), hsl(var(--muted) / 0.6));
-    --gradient-nav: linear-gradient(180deg, hsl(var(--card) / 0.95), hsl(var(--card) / 0.85));
-    --gradient-card: linear-gradient(145deg, hsl(var(--card)), hsl(var(--muted) / 0.1));
-    --gradient-premium: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--primary)));
-    --gradient-mesh: radial-gradient(circle at 20% 50%, hsl(var(--primary) / 0.1), transparent 70%), 
-                     radial-gradient(circle at 80% 20%, hsl(var(--secondary) / 0.1), transparent 70%),
-                     radial-gradient(circle at 40% 80%, hsl(var(--accent) / 0.1), transparent 70%);
+    --gradient-card: linear-gradient(145deg, hsl(var(--card)), hsl(40 20% 98%));
+    --gradient-soft: linear-gradient(135deg, hsl(40 35% 95%), hsl(150 20% 95%));
+    --gradient-warm: linear-gradient(135deg, hsl(var(--accent) / 0.1), hsl(var(--primary) / 0.05));
     
-    /* Premium Shadow System */
-    --shadow-terracotta: 0 10px 30px -10px hsl(var(--primary) / 0.3);
-    --shadow-glow: 0 0 40px hsl(var(--primary-glow) / 0.4);
-    --shadow-card: 0 2px 8px -2px hsl(0 0% 0% / 0.1), 0 4px 20px -4px hsl(var(--primary) / 0.05);
-    --shadow-glass: 0 8px 32px 0 hsl(0 0% 0% / 0.08), inset 0 1px 0 hsl(0 0% 100% / 0.1);
-    --shadow-nav: 0 4px 24px -4px hsl(var(--primary) / 0.1);
-    --shadow-floating: 0 20px 40px -8px hsl(0 0% 0% / 0.15), 0 0 0 1px hsl(var(--border) / 0.5);
-    --shadow-premium: 0 8px 40px -12px hsl(var(--primary) / 0.4), 0 0 0 1px hsl(var(--primary) / 0.1);
-    --shadow-subtle: 0 1px 3px 0 hsl(0 0% 0% / 0.1), 0 1px 2px 0 hsl(0 0% 0% / 0.06);
-    --shadow-medium: 0 4px 6px -1px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.06);
-    --shadow-large: 0 10px 15px -3px hsl(0 0% 0% / 0.1), 0 4px 6px -2px hsl(0 0% 0% / 0.05);
+    /* Refined Shadow System - Soft & Elegant */
+    --shadow-soft: 0 2px 8px -1px hsl(30 10% 20% / 0.06), 0 1px 3px 0 hsl(30 10% 20% / 0.04);
+    --shadow-medium: 0 4px 12px -2px hsl(30 10% 20% / 0.08), 0 2px 6px -1px hsl(30 10% 20% / 0.05);
+    --shadow-large: 0 8px 24px -4px hsl(30 10% 20% / 0.1), 0 4px 12px -2px hsl(30 10% 20% / 0.06);
+    --shadow-elegant: 0 12px 32px -8px hsl(30 10% 20% / 0.12), 0 0 0 1px hsl(var(--border));
+    --shadow-card: 0 2px 8px -2px hsl(30 10% 20% / 0.06), 0 4px 16px -4px hsl(30 10% 20% / 0.04);
+    --shadow-hover: 0 8px 20px -4px hsl(30 10% 20% / 0.1), 0 4px 10px -2px hsl(30 10% 20% / 0.06);
+    --shadow-focus: 0 0 0 3px hsl(var(--primary) / 0.15);
+    --shadow-nav: 0 2px 12px -2px hsl(30 10% 20% / 0.05);
+    --shadow-floating: 0 16px 40px -12px hsl(30 10% 20% / 0.12);
+    --shadow-subtle: 0 1px 3px 0 hsl(30 10% 20% / 0.05);
+    --shadow-glow: 0 0 24px hsl(var(--primary) / 0.15);
     
-    /* Typography Scale */
-    --font-logo: 'Reem Kufi', sans-serif;
-    --font-heading: 'Poppins', sans-serif;
-    --font-display: 'Playfair Display', serif;
-    --font-body: 'Karla', sans-serif;
+    /* Typography Scale - Elegant & Refined */
+    --font-logo: 'Cormorant Garamond', 'Playfair Display', serif;
+    --font-heading: 'Poppins', 'Inter', sans-serif;
+    --font-display: 'Cormorant Garamond', 'Playfair Display', serif;
+    --font-body: 'Inter', 'Karla', sans-serif;
     --font-arabic: 'Cairo', sans-serif;
     
-    /* Premium Animations */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    --transition-spring: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    /* Refined Animations - Gentle & Smooth */
+    --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-gentle: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    --transition-elegant: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
     --transition-snappy: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    --transition-elegant: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    --transition-spring: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     
     --radius: 0.75rem;
 
@@ -164,11 +162,14 @@ All colors MUST be HSL. 60/30/10 color usage with WCAG AA accessibility.
   body {
     @apply bg-background text-foreground font-body;
     font-feature-settings: 'kern' 1, 'liga' 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
-    font-weight: 600;
+    font-weight: 500;
+    letter-spacing: -0.02em;
   }
   
   .font-logo {
@@ -188,7 +189,7 @@ All colors MUST be HSL. 60/30/10 color usage with WCAG AA accessibility.
     font-family: var(--font-arabic);
   }
   
-  /* Premium Gradient utilities */
+  /* Elegant Gradient utilities */
   .bg-gradient-primary {
     background: var(--gradient-primary);
   }
@@ -197,8 +198,8 @@ All colors MUST be HSL. 60/30/10 color usage with WCAG AA accessibility.
     background: var(--gradient-hero);
   }
   
-  .bg-gradient-flash {
-    background: var(--gradient-flash);
+  .bg-gradient-overlay {
+    background: var(--gradient-overlay);
   }
   
   .bg-gradient-subtle {
@@ -209,45 +210,17 @@ All colors MUST be HSL. 60/30/10 color usage with WCAG AA accessibility.
     background: var(--gradient-card);
   }
   
-  .bg-gradient-premium {
-    background: var(--gradient-premium);
+  .bg-gradient-soft {
+    background: var(--gradient-soft);
   }
   
-  .bg-gradient-mesh {
-    background: var(--gradient-mesh);
+  .bg-gradient-warm {
+    background: var(--gradient-warm);
   }
   
-  /* Premium Shadow utilities */
-  .shadow-terracotta {
-    box-shadow: var(--shadow-terracotta);
-  }
-  
-  .shadow-glow {
-    box-shadow: var(--shadow-glow);
-  }
-  
-  .shadow-card {
-    box-shadow: var(--shadow-card);
-  }
-  
-  .shadow-glass {
-    box-shadow: var(--shadow-glass);
-  }
-  
-  .shadow-nav {
-    box-shadow: var(--shadow-nav);
-  }
-  
-  .shadow-floating {
-    box-shadow: var(--shadow-floating);
-  }
-  
-  .shadow-premium {
-    box-shadow: var(--shadow-premium);
-  }
-  
-  .shadow-subtle {
-    box-shadow: var(--shadow-subtle);
+  /* Refined Shadow utilities */
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
   }
   
   .shadow-medium {
@@ -258,54 +231,71 @@ All colors MUST be HSL. 60/30/10 color usage with WCAG AA accessibility.
     box-shadow: var(--shadow-large);
   }
   
-  /* Premium Glassmorphism utilities */
-  .glass-panel {
-    background: var(--gradient-glass);
-    backdrop-filter: blur(12px);
-    border: 1px solid hsl(var(--border) / 0.2);
-    box-shadow: var(--shadow-glass);
+  .shadow-elegant {
+    box-shadow: var(--shadow-elegant);
   }
   
-  .glass-nav {
-    background: var(--gradient-nav);
-    backdrop-filter: blur(20px);
-    border: 1px solid hsl(var(--border) / 0.1);
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+  
+  .shadow-hover {
+    box-shadow: var(--shadow-hover);
+  }
+  
+  .shadow-focus {
+    box-shadow: var(--shadow-focus);
+  }
+  
+  .shadow-nav {
     box-shadow: var(--shadow-nav);
   }
   
-  .glass-card {
-    background: linear-gradient(135deg, hsl(var(--card) / 0.8), hsl(var(--card) / 0.4));
-    backdrop-filter: blur(16px);
-    border: 1px solid hsl(var(--border) / 0.3);
-    box-shadow: var(--shadow-glass);
+  .shadow-floating {
+    box-shadow: var(--shadow-floating);
   }
   
-  .glass-premium {
-    background: linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--accent) / 0.05));
-    backdrop-filter: blur(20px);
-    border: 1px solid hsl(var(--primary) / 0.2);
-    box-shadow: var(--shadow-premium);
+  .shadow-subtle {
+    box-shadow: var(--shadow-subtle);
   }
   
-  /* Premium Animations */
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+  
+  /* Minimal Card utilities */
+  .card-minimal {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    box-shadow: var(--shadow-card);
+    border-radius: var(--radius);
+  }
+  
+  .card-elevated {
+    background: hsl(var(--card));
+    box-shadow: var(--shadow-elegant);
+    border-radius: var(--radius);
+  }
+  
+  /* Refined Animations */
   .transition-smooth {
     transition: var(--transition-smooth);
   }
   
-  .transition-bounce {
-    transition: var(--transition-bounce);
+  .transition-gentle {
+    transition: var(--transition-gentle);
   }
   
-  .transition-spring {
-    transition: var(--transition-spring);
+  .transition-elegant {
+    transition: var(--transition-elegant);
   }
   
   .transition-snappy {
     transition: var(--transition-snappy);
   }
   
-  .transition-elegant {
-    transition: var(--transition-elegant);
+  .transition-spring {
+    transition: var(--transition-spring);
   }
   
   /* Safe area utilities for mobile devices */
@@ -329,25 +319,29 @@ All colors MUST be HSL. 60/30/10 color usage with WCAG AA accessibility.
     animation: flash-pulse 2s infinite;
   }
   
-  /* Premium Hover effects */
+  /* Elegant Hover effects */
   .hover-lift {
-    @apply transition-elegant hover:translate-y-[-4px] hover:shadow-large;
+    @apply transition-gentle hover:translate-y-[-2px] hover:shadow-hover;
+  }
+  
+  .hover-scale {
+    @apply transition-gentle hover:scale-[1.01] hover:shadow-hover;
   }
   
   .hover-glow {
     @apply transition-smooth hover:shadow-glow;
   }
   
-  .hover-glass {
-    @apply transition-smooth hover:bg-muted/20 hover:backdrop-blur-md;
-  }
-  
-  .hover-premium {
-    @apply transition-spring hover:scale-[1.02] hover:shadow-premium;
-  }
-  
   .hover-float {
-    @apply transition-elegant hover:translate-y-[-6px] hover:shadow-floating;
+    @apply transition-elegant hover:translate-y-[-3px] hover:shadow-elegant;
+  }
+  
+  .hover-zoom {
+    @apply overflow-hidden;
+  }
+  
+  .hover-zoom > img {
+    @apply transition-elegant hover:scale-105;
   }
   
   .hover-shimmer {
@@ -365,13 +359,25 @@ All colors MUST be HSL. 60/30/10 color usage with WCAG AA accessibility.
   }
   
   .nav-item {
-    @apply transition-smooth flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium;
-    @apply hover:bg-primary/10 hover:text-primary hover:shadow-nav;
-    @apply focus:bg-primary/10 focus:text-primary focus:outline-none;
+    @apply transition-gentle flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium;
+    @apply hover:text-primary relative;
+  }
+  
+  .nav-item::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-0 h-px bg-primary transition-all duration-300;
+  }
+  
+  .nav-item:hover::after {
+    @apply w-full;
   }
   
   .nav-item-active {
-    @apply bg-primary/15 text-primary shadow-nav;
+    @apply text-primary;
+  }
+  
+  .nav-item-active::after {
+    @apply w-full;
   }
   
   /* Scrollbar hide */
